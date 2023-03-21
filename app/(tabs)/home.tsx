@@ -1,6 +1,6 @@
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React from "react";
-import { SafeAreaView, Text } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
 const Home = () => {
 	return (
@@ -10,8 +10,14 @@ const Home = () => {
 					title: "Home",
 				}}
 			/>
-
-			<Text>hey</Text>
+			<View>
+				<Link href="/test">
+					<Text className="text-4xl font-semibold tracking-tight">
+						Open test modal
+					</Text>
+				</Link>
+				<Text>hey</Text>
+			</View>
 		</SafeAreaView>
 	);
 };

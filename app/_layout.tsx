@@ -1,8 +1,9 @@
 import React from "react";
-import { SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { useColorScheme } from "react-native";
+import { Text } from "react-native";
+// import { useColorScheme } from "react-native";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -15,8 +16,6 @@ export default function RootLayout() {
 	// 	...FontAwesome.font,
 	// 	SourceCodePro_400Regular,
 	// });
-
-	// Expo Router uses Error Boundaries to catch errors in the navigation tree.
 
 	// useEffect(() => {
 	// 	if (error) throw error;
@@ -31,20 +30,15 @@ export default function RootLayout() {
 	);
 }
 
-// import ErrorToastContainer from "@bacons/expo-metro-runtime/error-overlay";
-
 function RootLayoutNav() {
-	const colorScheme = useColorScheme();
+	// const colorScheme = useColorScheme();
 
 	return (
 		<>
-			{/* <RootContainer theme={colorScheme === "dark" ? DarkTheme : DefaultTheme} /> */}
-			{/* <ErrorToastContainer> */}
 			<Stack>
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				{/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
+				<Stack.Screen name="test" options={{ presentation: "modal" }} />
 			</Stack>
-			{/* </ErrorToastContainer> */}
 			<StatusBar />
 		</>
 	);
