@@ -4,8 +4,8 @@ module.exports = function (api) {
 		presets: ["babel-preset-expo"],
 		plugins: [
 			"nativewind/babel",
-			// react-native-paper/babel may cause issue
 			"react-native-paper/babel",
+			require.resolve("expo-router/babel"),
 			[
 				"module-resolver",
 				{

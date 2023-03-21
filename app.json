@@ -1,0 +1,10 @@
+{
+	"expo": {
+		"name": "gfg-hackathon",
+		"slug": "expo-router",
+		"scheme": "bacontext",
+		"web": {
+			"bundler": "metro"
+		}
+	}
+}
