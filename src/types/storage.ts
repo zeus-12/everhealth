@@ -1,27 +1,29 @@
 export interface StorageType {
 	hasOnboarded: boolean;
-
-	user: {
-		isAuthenticated: boolean;
-		authDetails: {
-			provider: "google" | "facebook" | "email";
-			email: string;
-			photoURL: string;
-			displayName: string;			
-		}
-	}
+	isAuthenticated: boolean;
 
 	personalDetails: {
 		name: string;
 		height: number;
 		weight: number;
 		age: number;
-	}
+	};
 
-	reminders: { startDate: Date; endDate: Date; time: string[]; task: string }[];
-	feedsInterested: string[];
 	appSettings: {
 		theme: "light" | "dark";
-		notifications: boolean;		
-	}
+		allowNotifications: boolean;
+	};
+
+	reminder: {
+		date: Date;
+		isCompleted: boolean;
+		task: string;
+		type: ReminderType;
+	}[];
+}
+
+enum ReminderType {
+	REMINDER = "REMINDER",
+	MEDICATION = "MEDICATION",
+	DOCTOR_VISITS = "DOCTOR VISITS",
 }
