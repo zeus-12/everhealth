@@ -14,10 +14,10 @@ export default function AppLayout() {
 			/>
 			<Tabs.Screen
 				options={{
-					href: "/tasks",
-					title: "Tasks",
+					href: "/search",
+					title: "Search",
 				}}
-				name="tasks"
+				name="search"
 			/>
 			<Tabs.Screen
 				options={{

@@ -7,11 +7,11 @@ const Home = () => {
 		<SafeAreaView>
 			<Stack.Screen
 				options={{
-					title: "Tasks",
+					title: "Search",
 				}}
 			/>
 
-			<Text>tasls page</Text>
+			<Text>search apge page</Text>
 		</SafeAreaView>
 	);
 };

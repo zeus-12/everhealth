@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { Text, View, SafeAreaView, ScrollView } from "react-native";
 import Heading from "@components/common/Heading";
-import * as Dummydata from "../../assets/feed-data.json";
+import * as DUMMY_DATA from "../../assets/feed-data.json";
 import FeedCard from "@components/feed/FeedCard";
 
 const feed = () => {
@@ -18,7 +18,7 @@ const feed = () => {
 			<Heading>Feeds</Heading>
 
 			<ScrollView>
-				{Dummydata.items.map((item) => (
+				{DUMMY_DATA.items.map((item) => (
 					<FeedCard
 						articleUrl={item.url}
 						key={item.id}
