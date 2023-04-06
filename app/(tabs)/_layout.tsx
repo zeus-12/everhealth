@@ -1,5 +1,8 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { Entypo } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 export default function AppLayout() {
 	return (
@@ -8,7 +11,7 @@ export default function AppLayout() {
 				options={{
 					href: "/home",
 					title: "Home",
-					// tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+					tabBarIcon: ({ color }) => <Entypo name="home" size={24} color={color} />,
 				}}
 				name="home"
 			/>
@@ -16,6 +19,7 @@ export default function AppLayout() {
 				options={{
 					href: "/search",
 					title: "Search",
+					tabBarIcon: ({ color }) => <Entypo name="home" size={24} color={color} />,
 				}}
 				name="search"
 			/>
@@ -23,6 +27,9 @@ export default function AppLayout() {
 				options={{
 					href: "/feed",
 					title: "Feed",
+					tabBarIcon: ({ color }) => (
+						<Ionicons name="newspaper" size={24} color={color} />
+					),
 				}}
 				name="feed"
 			/>
@@ -30,6 +37,7 @@ export default function AppLayout() {
 				options={{
 					href: "/user",
 					title: "User",
+					tabBarIcon: ({ color }) => <Feather name="user" size={24} color={color} />,
 				}}
 				name="user"
 			/>

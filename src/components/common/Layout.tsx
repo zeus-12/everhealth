@@ -3,6 +3,10 @@ import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import Heading from "./Heading";
 import { useState } from "react";
 
+const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
+const OFFSET_ANGLE = 10;
+const INCREMENT_ANGLE = (100 - 2 * OFFSET_ANGLE) / 2;
+
 const Layout = ({
 	pageHeading,
 	children,
@@ -25,13 +29,15 @@ const Layout = ({
 				}}
 			/>
 			<Heading>{pageHeading}</Heading>
-			{children}
+			<View className="mt-2">{children}</View>
 
 			{showAddTasksButton && (
 				<>
 					<TouchableOpacity
 						onPress={handleAddTasksButtonPress}
-						className="w-14 justify-center items-center h-14 rounded-full absolute bottom-24 right-0 bg-gray-400"
+						className={`w-14 justify-center items-center h-14 rounded-full absolute bottom-24 right-0 ${
+							isAddTasksButtonActive ? "bg-transparent" : "bg-gray-400"
+						}`}
 					>
 						<Text className={`text-3xl ${isAddTasksButtonActive ? "rotate-45" : ""}`}>
 							+
@@ -41,18 +47,25 @@ const Layout = ({
 					{isAddTasksButtonActive &&
 						[
 							{
-								icon: "📚",
+								icon: "💪",
 							},
 							{
-								icon: "📝",
+								icon: "💊",
 							},
 							{
-								icon: "🏥",
+								icon: "🩺",
 							},
 						].map((item, i) => (
 							<View
-								className="w-14 justify-center items-center h-14 rounded-full absolute right-0 bg-gray-400"
-								style={{ bottom: 96 + 70 * (i + 1) }}
+								key={i}
+								className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400"
+								style={{
+									bottom:
+										96 +
+										120 * Math.sin(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
+									right:
+										120 * Math.cos(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
+								}}
 							>
 								<TouchableOpacity
 									onPress={() => console.log("add personal growth task")}

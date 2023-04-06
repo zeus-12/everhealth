@@ -1,0 +1,5 @@
+- add tasks ui, add option to go to a diff day
+- tasks from db - learn sqlite
+- user page
+- leaderboard page
+- add gpt

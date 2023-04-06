@@ -10,7 +10,7 @@ const Home = () => {
 				Hows your day been? 💪
 			</Text>
 
-			<ScrollView className="mt-4">
+			<ScrollView className="">
 				<Text className="text-center text-3xl tracking-tighter font-semibold">
 					{/* replace with state */}
 					June 13
