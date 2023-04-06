@@ -3,3 +3,6 @@
 - user page
 - leaderboard page
 - add gpt
+- notification?
+- theme
+- doctor visits + doctor contacts data
