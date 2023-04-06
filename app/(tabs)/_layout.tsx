@@ -1,8 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Entypo } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons, Entypo, Feather } from "@expo/vector-icons";
 
 export default function AppLayout() {
 	return (
