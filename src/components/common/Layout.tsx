@@ -1,10 +1,7 @@
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import Heading from "./Heading";
 import { useState } from "react";
-import {
-	SCREEN_HEIGHT_WITHOUT_TABS,
-	getScreenHeightWithoutTabs,
-} from "../../lib/constants";
+import { getScreenHeightWithoutTabs } from "../../lib/constants";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
