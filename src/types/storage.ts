@@ -1,6 +1,6 @@
-export interface StorageType {
+export interface Storage {
 	hasOnboarded: boolean;
-	isAuthenticated: boolean;
+	isAuthenticatedAsGuest: false;
 
 	personalDetails: {
 		name: string;
@@ -13,17 +13,17 @@ export interface StorageType {
 		theme: "light" | "dark";
 		allowNotifications: boolean;
 	};
-
-	reminder: {
-		date: Date;
-		isCompleted: boolean;
-		task: string;
-		type: ReminderType;
-	}[];
 }
 
-enum ReminderType {
-	REMINDER = "REMINDER",
+export interface Reminder {
+	date: Date;
+	isCompleted: boolean;
+	task: string;
+	type: ReminderType;
+}
+
+export enum ReminderType {
+	PERSONAL_GROWTH = "PERSONAL_GROWTH",
 	MEDICATION = "MEDICATION",
-	DOCTOR_VISITS = "DOCTOR VISITS",
+	DOCTOR_VISIT = "DOCTOR_VISIT",
 }

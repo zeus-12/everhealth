@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { TextInput } from "react-native-paper";
 import Layout from "@components/common/Layout";
+import { Input } from "native-base";
 
-const Home = () => {
+const Search = () => {
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState([]);
 
@@ -14,12 +14,14 @@ const Home = () => {
 	};
 
 	return (
-		<Layout pageHeading="Search" routeTitle="Search">
-			<TextInput
+		<Layout pageHeading="Search">
+			<Input
+				variant="filled"
+				size="lg"
 				className="rounded-md bg-gray-200"
-				label="Email"
-				mode="flat"
-				left={<TextInput.Icon icon="magnify" />}
+				placeholder="Email"
+				// mode="flat"
+				// left={<TextInput.Icon icon="magnify" />}
 				value={query}
 				onChangeText={(text) => setQuery(text)}
 			/>
@@ -34,4 +36,4 @@ const Home = () => {
 		</Layout>
 	);
 };
-export default Home;
+export default Search;

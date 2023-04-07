@@ -1,16 +1,15 @@
-import { Stack } from "expo-router";
 import React from "react";
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
 import Layout from "@components/common/Layout";
 
-const Home = () => {
+const User = () => {
 	const userSettings = [{}];
 
 	return (
-		<Layout pageHeading="User" routeTitle="User">
+		<Layout pageHeading="User">
 			<ScrollView>
 				{/* usericon */}
-				{/* username */}
+				<Text>username</Text>
 
 				{/* usersettings */}
 				<View></View>
@@ -18,4 +17,4 @@ const Home = () => {
 		</Layout>
 	);
 };
-export default Home;
+export default User;

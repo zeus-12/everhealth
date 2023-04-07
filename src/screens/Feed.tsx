@@ -1,22 +1,12 @@
-import { Stack } from "expo-router";
 import React from "react";
-import { Text, View, SafeAreaView, ScrollView } from "react-native";
-import Heading from "@components/common/Heading";
+import { ScrollView } from "react-native";
 import * as DUMMY_DATA from "../../assets/feed-data.json";
 import FeedCard from "@components/feed/FeedCard";
+import Layout from "@components/common/Layout";
 
-const feed = () => {
+const Feed = () => {
 	return (
-		<SafeAreaView className="mx-4">
-			<Stack.Screen
-				options={{
-					title: "Feed",
-					headerShown: false,
-				}}
-			/>
-
-			<Heading>Feeds</Heading>
-
+		<Layout pageHeading="Feeds">
 			<ScrollView>
 				{DUMMY_DATA.items.map((item) => (
 					<FeedCard
@@ -28,7 +18,7 @@ const feed = () => {
 					/>
 				))}
 			</ScrollView>
-		</SafeAreaView>
+		</Layout>
 	);
 };
-export default feed;
+export default Feed;

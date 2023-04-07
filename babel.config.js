@@ -4,8 +4,6 @@ module.exports = function (api) {
 		presets: ["babel-preset-expo"],
 		plugins: [
 			"nativewind/babel",
-			"react-native-paper/babel",
-			require.resolve("expo-router/babel"),
 			[
 				"module-resolver",
 				{
@@ -14,6 +12,7 @@ module.exports = function (api) {
 						"@screens": "./src/screens",
 						"@components": "./src/components",
 						"@lib": "./src/lib",
+						"@": "./src",
 					},
 				},
 			],

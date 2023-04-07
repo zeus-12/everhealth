@@ -5,4 +5,6 @@
 - add gpt
 - notification?
 - theme
-- doctor visits + doctor contacts data
+- doctor visits + doctor contacts data -> also store these to sqlite
+- integrate auth using clerk
+- setup async storage

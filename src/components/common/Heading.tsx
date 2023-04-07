@@ -1,4 +1,4 @@
-import { Text } from "react-native-paper";
+import { Text } from "react-native";
 
 const Heading = ({ children }) => {
 	return (
