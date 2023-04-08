@@ -3,7 +3,8 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
-import { useUserStore } from "@/hooks/useStore";
+import { useAppSettings, useUserStore } from "@/hooks/useStore";
+import { Switch } from "native-base";
 
 interface UserSettingsButtonsType {
 	title: string;
@@ -12,9 +13,14 @@ interface UserSettingsButtonsType {
 }
 
 const User = () => {
-	const { resetAll, height, age, weight, name } = useUserStore((s) => {
-		return s;
-	});
+	const { resetAll, height, age, weight, name } = useUserStore((s) => s);
+
+	const {
+		setIsDarktheme,
+		isDarktheme,
+		allowNotifications,
+		setAllowNotifications,
+	} = useAppSettings((s) => s);
 
 	const userSettingsButtons: UserSettingsButtonsType[] = [
 		{
@@ -40,8 +46,22 @@ const User = () => {
 		},
 	];
 
-	// dark mode
-	// update height, weight, name,
+	const userSettingsToggles = [
+		{
+			title: "Dark Mode",
+			onClick: (newVal: boolean) => {
+				setIsDarktheme(newVal);
+			},
+			value: isDarktheme,
+		},
+		{
+			title: "Enable Notifications",
+			onClick: (newVal: boolean) => {
+				setAllowNotifications(newVal);
+			},
+			value: allowNotifications,
+		},
+	];
 
 	return (
 		<Layout pageHeading="User">
@@ -58,8 +78,18 @@ const User = () => {
 				<Text className="text-center">See leaderboard</Text>
 				{/* usersettings */}
 				<View className="mt-4">
+					{userSettingsToggles.map((setting) => (
+						<View
+							className="bg-gray-200 my-2 py-3 rounded-lg flex-row px-4 justify-between text-start"
+							key={setting.title}
+						>
+							<Text className="text-lg">{setting.title}</Text>
+							<Switch size="md" value={setting.value} onToggle={setting.onClick} />
+						</View>
+					))}
 					{userSettingsButtons.map((setting) => (
 						<TouchableOpacity
+							key={setting.title}
 							className="bg-gray-200 my-2 py-3 rounded-lg flex-row px-4 justify-between text-start"
 							onPress={setting.onClick}
 						>

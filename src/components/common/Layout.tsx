@@ -21,7 +21,7 @@ const Layout = ({
 
 	return (
 		<SafeAreaView
-			className="mx-4 mt-12"
+			className="mx-4 mt-12 dark:bg-black"
 			style={{ minHeight: getScreenHeightWithoutTabs() }}
 		>
 			<Heading>{pageHeading}</Heading>

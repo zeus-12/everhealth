@@ -3,6 +3,6 @@
 - leaderboard page
 - add gpt
 - notification?
-- theme
+- theme!!!
 - doctor visits + doctor contacts data -> also store these to sqlite
 - integrate auth using clerk

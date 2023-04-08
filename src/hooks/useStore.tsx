@@ -48,11 +48,17 @@ export const useUserStore = create<any>(
 export const useAppSettings = create<any>(
 	persist(
 		(set, get) => ({
-			theme: "light",
+			isDarktheme: false,
+			setIsDarktheme: (isDarktheme: boolean) => set({ isDarktheme }),
+
 			allowNotifications: false,
-			setTheme: (theme: "light" | "dark") => set({ theme }),
 			setAllowNotifications: (allowNotifications: boolean) =>
 				set({ allowNotifications }),
+
+			resetAll: () => {
+				set({ theme: "light" });
+				set({ allowNotifications: false });
+			},
 		}),
 		{
 			name: "app-data", // unique name

@@ -1,33 +1,36 @@
+import { useEffect, useState } from "react";
 import { SafeAreaView, Text } from "react-native";
-import { Button, NativeBaseProvider } from "native-base";
+import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import Home from "@/screens/Home";
 import Search from "@/screens/Search";
 import Feed from "@/screens/Feed";
 import User from "@/screens/User";
+import UserData from "@/screens/onboarding/UserData";
+import OnboardingWelcome from "@/screens/onboarding/Welcome";
+
 import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import OnboardingWelcome from "@/screens/onboarding/Welcome";
-import UserData from "./src/screens/onboarding/UserData";
-import { useEffect, useState } from "react";
-import { useUserStore } from "./src/hooks/useStore";
+import { useAppSettings, useUserStore } from "@/hooks/useStore";
+import { useColorScheme } from "nativewind";
 
 export default function App() {
 	const Tab = createBottomTabNavigator();
 	const Stack = createNativeStackNavigator();
 
 	// use loaded for loading fonts,etc
-	const [loaded, isLoaded] = useState<boolean>(true);
+	const [loaded, setLoaded] = useState<boolean>(true);
 
 	const hasOnboarded = useUserStore((s) => s.hasOnboarded);
-	console.log(hasOnboarded, "has onboarded");
+	const isDarktheme = useAppSettings((s) => s.isDarktheme);
 
-	const setHasOnBoarded = useUserStore((s) => s.setHasOnBoarded);
+	const { setColorScheme, colorScheme } = useColorScheme();
 
-	const handleOnboarding = () => {
-		setHasOnBoarded(true);
-	};
+	useEffect(() => {
+		setColorScheme(isDarktheme ? "dark" : "light");
+	}, [isDarktheme]);
 
 	return (
 		<NavigationContainer>
@@ -35,7 +38,6 @@ export default function App() {
 				{!loaded ? (
 					<SafeAreaView>
 						<Text>splash screen</Text>
-						<Button onPress={handleOnboarding}>signi n</Button>
 					</SafeAreaView>
 				) : hasOnboarded ? (
 					<Tab.Navigator

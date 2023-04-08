@@ -10,7 +10,7 @@ export interface Storage {
 	};
 
 	appSettings: {
-		theme: "light" | "dark";
+		isDarkTheme: boolean;
 		allowNotifications: boolean;
 	};
 }
