@@ -11,6 +11,7 @@ const Home = () => {
 	const filterTasksByType = (type: ReminderType) => {
 		if (!tasks || tasks.length === 0) return [];
 
+		// @ts-ignore
 		const filteredTasks = tasks?.filter((task: Reminder) => task.type === type);
 
 		return filteredTasks;
@@ -18,14 +19,11 @@ const Home = () => {
 
 	return (
 		<Layout pageHeading="Home">
-			{/* <Link href={"/onboarding/welcome"}>
-				<Text className="text-4xl font-semibold tracking-tight">hi</Text>
-			</Link> */}
-			<Text className="text-gray-700 text-2xl font-mediunm tracking-tight">
+			<Text className="text-gray-700 text-xl -mt-2 font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
 
-			<ScrollView className="">
+			<ScrollView className="mt-4">
 				<Text className="text-center text-3xl tracking-tighter font-semibold">
 					{/* replace with state */}
 					June 13

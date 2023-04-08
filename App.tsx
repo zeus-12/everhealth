@@ -1,5 +1,5 @@
 import { SafeAreaView, Text } from "react-native";
-import { NativeBaseProvider } from "native-base";
+import { Button, NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "@/screens/Home";
@@ -11,33 +11,23 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnboardingWelcome from "@/screens/onboarding/Welcome";
 import UserData from "./src/screens/onboarding/UserData";
 import { useEffect, useState } from "react";
-import { getData } from "./src/lib/utils";
+import { useUserStore } from "./src/hooks/useStore";
 
 export default function App() {
 	const Tab = createBottomTabNavigator();
 	const Stack = createNativeStackNavigator();
 
-	const [loaded, isLoaded] = useState<boolean>(false);
-	const [hasOnboarded, setOnboarded] = useState<boolean>(false);
+	// use loaded for loading fonts,etc
+	const [loaded, isLoaded] = useState<boolean>(true);
 
-	useEffect(() => {
-		const verifyOnboarding = async () => {
-			const hasOnboarded = await getData("hasOnboarded");
-			console.log(hasOnboarded, "a");
-			if (hasOnboarded === true) {
-				console.log("ho");
-				setOnboarded(true);
-			} else {
-				// todo change
-				setOnboarded(true);
-			}
-		};
-		verifyOnboarding();
-	}, []);
+	const hasOnboarded = useUserStore((s) => s.hasOnboarded);
+	console.log(hasOnboarded, "has onboarded");
 
-	useEffect(() => {
-		if (hasOnboarded) return isLoaded(true);
-	}, [hasOnboarded]);
+	const setHasOnBoarded = useUserStore((s) => s.setHasOnBoarded);
+
+	const handleOnboarding = () => {
+		setHasOnBoarded(true);
+	};
 
 	return (
 		<NavigationContainer>
@@ -45,9 +35,11 @@ export default function App() {
 				{!loaded ? (
 					<SafeAreaView>
 						<Text>splash screen</Text>
+						<Button onPress={handleOnboarding}>signi n</Button>
 					</SafeAreaView>
-				) : true ? (
+				) : hasOnboarded ? (
 					<Tab.Navigator
+						// ADD BACKBUTTON
 						screenOptions={({ route }) => ({
 							// remove headertitle
 							headerShown: false,
@@ -92,6 +84,7 @@ export default function App() {
 					</Tab.Navigator>
 				) : (
 					<Stack.Navigator
+						// ADD BACKBUTTON
 						screenOptions={{
 							headerShown: false,
 						}}

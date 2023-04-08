@@ -21,7 +21,7 @@ const Layout = ({
 
 	return (
 		<SafeAreaView
-			className="mx-4"
+			className="mx-4 mt-12"
 			style={{ minHeight: getScreenHeightWithoutTabs() }}
 		>
 			<Heading>{pageHeading}</Heading>
@@ -34,9 +34,9 @@ const Layout = ({
 						className={`w-14 justify-center items-center h-14 rounded-full absolute right-0 ${
 							isAddTasksButtonActive ? "bg-transparent" : "bg-gray-400"
 						}`}
-						style={{ bottom: 20 }}
+						style={{ bottom: 60 }}
 					>
-						<Text className={`text-3xl ${isAddTasksButtonActive ? "rotate-45" : ""}`}>
+						<Text className={`text-4xl ${isAddTasksButtonActive ? "rotate-45" : ""}`}>
 							+
 						</Text>
 					</TouchableOpacity>
@@ -58,7 +58,7 @@ const Layout = ({
 								className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400"
 								style={{
 									bottom:
-										20 +
+										60 +
 										120 * Math.sin(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
 									right:
 										120 * Math.cos(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
