@@ -1,11 +1,5 @@
 import React from "react";
-import {
-	SafeAreaView,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
@@ -52,7 +46,7 @@ const User = () => {
 	return (
 		<Layout pageHeading="User">
 			<ScrollView>
-				{/* usericon */}
+				{/* todo use image from assets instead */}
 				<Image
 					source={"https://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png"}
 					contentFit="cover"
