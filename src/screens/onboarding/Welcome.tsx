@@ -1,4 +1,5 @@
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { SCREEN_HEIGHT } from "../../lib/constants";
 
 const OnboardingWelcome = ({ navigation }) => {

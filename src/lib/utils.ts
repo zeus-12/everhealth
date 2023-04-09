@@ -1,4 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SQLite from "expo-sqlite";
+import { Platform } from "react-native";
 
 export const getParsedData = (data: string) => {
 	try {
@@ -10,31 +11,18 @@ export const getParsedData = (data: string) => {
 	}
 };
 
-export const storeData = async (key: string, value: any) => {
-	try {
-		if (typeof value === "object") {
-			value = JSON.stringify(value);
-		} else if (typeof value === "number") {
-			value = value.toString();
-		}
-
-		await AsyncStorage.setItem(key, value);
-	} catch (err) {}
-};
-
-export const getData = async (key: string) => {
-	let value: any;
-	try {
-		value = await AsyncStorage.getItem(key);
-	} catch (e) {
-		// error reading value
+function openDatabase() {
+	if (Platform.OS === "web") {
+		return {
+			transaction: () => {
+				return {
+					executeSql: () => {},
+				};
+			},
+		};
 	}
+	const db = SQLite.openDatabase("db.db");
+	return db;
+}
 
-	// look for a better way
-	try {
-		const res = JSON.stringify(value);
-		return res;
-	} catch (err) {
-		return value;
-	}
-};
+export const db = openDatabase();

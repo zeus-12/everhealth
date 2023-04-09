@@ -14,6 +14,7 @@ interface UserSettingsButtonsType {
 
 const User = () => {
 	const { resetAll, height, age, weight, name } = useUserStore((s) => s);
+	const { resetAll: resetAllAppSettings } = useAppSettings((s) => s);
 
 	const {
 		setIsDarktheme,
@@ -41,7 +42,10 @@ const User = () => {
 		{
 			title: "Logout",
 			onClick: () => {
+				// add confirmation modal
+				// delete db
 				resetAll();
+				resetAllAppSettings();
 			},
 		},
 	];
@@ -65,7 +69,7 @@ const User = () => {
 
 	return (
 		<Layout pageHeading="User">
-			<ScrollView>
+			<ScrollView className="grow">
 				{/* todo use image from assets instead */}
 				<Image
 					source={"https://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png"}
@@ -79,24 +83,26 @@ const User = () => {
 				</Text>
 				<Text className="text-center dark:text-slate-400">See leaderboard</Text>
 				{/* usersettings */}
-				<View className="mt-4">
+				<View className="mt-4 rouned-md rounded-xl bg-white dark:bg-gray-800 divide-y-[0.175px] divide-gray-500">
 					{userSettingsToggles.map((setting) => (
 						<View
-							className="bg-gray-200 dark:bg-gray-400 my-2 py-3 rounded-lg flex-row px-4 justify-between text-start"
+							className="py-3 flex-row px-4 justify-between text-start"
 							key={setting.title}
 						>
-							<Text className="text-lg">{setting.title}</Text>
+							<Text className="text-lg dark:text-slate-100">{setting.title}</Text>
 							<Switch size="md" value={setting.value} onToggle={setting.onClick} />
 						</View>
 					))}
 					{userSettingsButtons.map((setting) => (
 						<TouchableOpacity
 							key={setting.title}
-							className="bg-gray-200 dark:bg-gray-400 my-2 py-3 rounded-lg flex-row px-4 justify-between text-start"
+							className="py-3 flex-row px-4 justify-between text-start"
 							onPress={setting.onClick}
 						>
-							<Text className="text-lg">{setting.title}</Text>
-							{setting.value && <Text className="text-lg">{setting.value}</Text>}
+							<Text className="text-lg dark:text-slate-100">{setting.title}</Text>
+							{setting.value && (
+								<Text className="text-lg dark:text-slate-100">{setting.value}</Text>
+							)}
 						</TouchableOpacity>
 					))}
 				</View>

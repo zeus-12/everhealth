@@ -56,7 +56,7 @@ export const useAppSettings = create<any>(
 				set({ allowNotifications }),
 
 			resetAll: () => {
-				set({ theme: "light" });
+				set({ isDarktheme: false });
 				set({ allowNotifications: false });
 			},
 		}),

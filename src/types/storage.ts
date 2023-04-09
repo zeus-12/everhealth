@@ -16,10 +16,16 @@ export interface Storage {
 }
 
 export interface Reminder {
-	date: Date;
+	group_id: string;
+	id: string;
+
+	date: Date; // YYYY-MM-DD
 	isCompleted: boolean;
+
 	task: string;
 	type: ReminderType;
+
+	time: string; // 24 hour time format 20:30 , 04:40 ,etc
 }
 
 export enum ReminderType {

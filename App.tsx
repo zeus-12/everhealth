@@ -26,7 +26,7 @@ export default function App() {
 	const hasOnboarded = useUserStore((s) => s.hasOnboarded);
 	const isDarktheme = useAppSettings((s) => s.isDarktheme);
 
-	const { setColorScheme, toggleColorScheme, colorScheme } = useColorScheme();
+	const { setColorScheme } = useColorScheme();
 
 	useEffect(() => {
 		setColorScheme(isDarktheme ? "dark" : "light");

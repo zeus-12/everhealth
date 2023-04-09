@@ -1,16 +1,11 @@
-import { Controller, Resolver, useForm } from "react-hook-form";
-import {
-	Keyboard,
-	SafeAreaView,
-	Text,
-	TouchableWithoutFeedback,
-	View,
-} from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 import { SCREEN_HEIGHT } from "../../lib/constants";
 import { Button, FormControl, Input, WarningOutlineIcon } from "native-base";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUserStore } from "../../hooks/useStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface FormValues {
 	name: string;
@@ -100,8 +95,6 @@ const PersonalData = () => {
 			isNumeric: true,
 		},
 	] as const;
-
-	console.log("errors", errors);
 
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
