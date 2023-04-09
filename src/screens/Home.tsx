@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
-import DUMMY_TASKS from "../../assets/dummy-tasks";
+import DUMMY_TASKS from "@/assets/dummy-tasks";
 import { ReminderType, Reminder } from "../types/storage";
 import { Checkbox } from "native-base";
 
