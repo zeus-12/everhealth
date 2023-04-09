@@ -20,61 +20,67 @@ const Layout = ({
 	};
 
 	return (
-		<SafeAreaView
-			className="mx-4 mt-12 dark:bg-black"
-			style={{ minHeight: getScreenHeightWithoutTabs() }}
-		>
-			<Heading>{pageHeading}</Heading>
-			<View className="mt-2">{children}</View>
+		<View className="dark:bg-black">
+			<SafeAreaView
+				className="mx-4 mt-12"
+				style={{ minHeight: getScreenHeightWithoutTabs() }}
+			>
+				<Heading>{pageHeading}</Heading>
+				<View className="mt-2">{children}</View>
 
-			{showAddTasksButton && (
-				<>
-					<TouchableOpacity
-						onPress={handleAddTasksButtonPress}
-						className={`w-14 justify-center items-center h-14 rounded-full absolute right-0 ${
-							isAddTasksButtonActive ? "bg-transparent" : "bg-gray-400"
-						}`}
-						style={{ bottom: 60 }}
-					>
-						<Text className={`text-4xl ${isAddTasksButtonActive ? "rotate-45" : ""}`}>
-							+
-						</Text>
-					</TouchableOpacity>
-
-					{isAddTasksButtonActive &&
-						[
-							{
-								icon: "💪",
-							},
-							{
-								icon: "💊",
-							},
-							{
-								icon: "🩺",
-							},
-						].map((item, i) => (
-							<View
-								key={i}
-								className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400"
-								style={{
-									bottom:
-										60 +
-										120 * Math.sin(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
-									right:
-										120 * Math.cos(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
-								}}
+				{showAddTasksButton && (
+					<>
+						<TouchableOpacity
+							onPress={handleAddTasksButtonPress}
+							className={`w-14 justify-center items-center h-14 rounded-full absolute right-0 ${
+								isAddTasksButtonActive ? "bg-transparent" : "bg-gray-400"
+							}`}
+							style={{ bottom: 60 }}
+						>
+							<Text
+								className={`text-4xl ${
+									isAddTasksButtonActive ? "rotate-45" : ""
+								} dark:text-gray-200`}
 							>
-								<TouchableOpacity
-									onPress={() => console.log("add personal growth task")}
-									className="w-14 justify-center items-center h-14 rounded-full bg-gray-400"
+								+
+							</Text>
+						</TouchableOpacity>
+
+						{isAddTasksButtonActive &&
+							[
+								{
+									icon: "💪",
+								},
+								{
+									icon: "💊",
+								},
+								{
+									icon: "🩺",
+								},
+							].map((item, i) => (
+								<View
+									key={i}
+									className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400"
+									style={{
+										bottom:
+											60 +
+											120 * Math.sin(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
+										right:
+											120 * Math.cos(degreeToRadian(OFFSET_ANGLE + i * INCREMENT_ANGLE)),
+									}}
 								>
-									<Text className="text-3xl">{item.icon}</Text>
-								</TouchableOpacity>
-							</View>
-						))}
-				</>
-			)}
-		</SafeAreaView>
+									<TouchableOpacity
+										onPress={() => console.log("add personal growth task")}
+										className="w-14 justify-center items-center h-14 rounded-full bg-gray-400"
+									>
+										<Text className="text-3xl">{item.icon}</Text>
+									</TouchableOpacity>
+								</View>
+							))}
+					</>
+				)}
+			</SafeAreaView>
+		</View>
 	);
 };
 export default Layout;

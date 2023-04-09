@@ -11,7 +11,7 @@ const FeedCard = ({ image, title, publishedDate, articleUrl }) => {
 	return (
 		<TouchableOpacity
 			onPress={handleArticleClick}
-			className="my-2 bg-gray-100 border-gray-200 border-[1px] rounded-md"
+			className="my-2 bg-gray-100 dark:bg-gray-900  border-gray-200 dark:border-gray-700 border-[1px] rounded-md"
 		>
 			<Image
 				source={image}
@@ -20,7 +20,7 @@ const FeedCard = ({ image, title, publishedDate, articleUrl }) => {
 				placeholder={blurHash}
 				className="aspect-video w-full mx-auto rounded-lg"
 			/>
-			<Text className="text-lg tracking-tight font-normal px-2 py-1 text-gray-700">
+			<Text className="text-lg tracking-tight font-normal px-2 py-1 text-gray-700 dark:text-gray-300">
 				{title}
 			</Text>
 		</TouchableOpacity>

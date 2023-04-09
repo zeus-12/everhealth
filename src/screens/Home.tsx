@@ -19,12 +19,12 @@ const Home = () => {
 
 	return (
 		<Layout pageHeading="Home">
-			<Text className="text-gray-700 text-xl -mt-2 font-medium tracking-tight">
+			<Text className="text-gray-700 dark:text-gray-400 text-xl -mt-2 font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
 
-			<ScrollView className="mt-4">
-				<Text className="text-center text-3xl tracking-tighter font-semibold">
+			<ScrollView className="mt-4 dark">
+				<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
 					{/* replace with state */}
 					June 13
 				</Text>

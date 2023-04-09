@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SafeAreaView, Text } from "react-native";
+import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -26,7 +26,7 @@ export default function App() {
 	const hasOnboarded = useUserStore((s) => s.hasOnboarded);
 	const isDarktheme = useAppSettings((s) => s.isDarktheme);
 
-	const { setColorScheme, colorScheme } = useColorScheme();
+	const { setColorScheme, toggleColorScheme, colorScheme } = useColorScheme();
 
 	useEffect(() => {
 		setColorScheme(isDarktheme ? "dark" : "light");
@@ -45,6 +45,10 @@ export default function App() {
 						screenOptions={({ route }) => ({
 							// remove headertitle
 							headerShown: false,
+
+							tabBarStyle: {
+								backgroundColor: isDarktheme ? "#030712" : "white",
+							},
 						})}
 					>
 						<Tab.Screen
