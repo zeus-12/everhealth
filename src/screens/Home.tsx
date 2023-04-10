@@ -7,11 +7,14 @@ import { Checkbox } from "native-base";
 import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
 
 const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
 	const [date, setDate] = useState(new Date());
 	console.log(date);
+	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [reminders, setReminders] = useState([]);
 
 	const filterTasksByType = (type: ReminderType) => {
@@ -143,6 +146,25 @@ const Home = ({ navigation }) => {
 			<Text className="text-gray-700 dark:text-gray-400 text-xl -mt-2 font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
+
+			<TouchableOpacity onPress={() => setShowDatePicker(true)}>
+				<Text>Show Date Picker</Text>
+			</TouchableOpacity>
+
+			{showDatePicker && (
+				<DateTimePicker
+					value={date}
+					onChange={(event, selectedDate) => {
+						// Handle date change here
+						if (event.type === "set") {
+							setShowDatePicker(false);
+							setDate(selectedDate);
+						} else {
+							setShowDatePicker(false);
+						}
+					}}
+				/>
+			)}
 
 			<ScrollView className="mt-4 dark">
 				<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
