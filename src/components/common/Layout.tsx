@@ -37,9 +37,14 @@ const Layout = ({
 							style={{ bottom: 15 }}
 						>
 							<Text
-								className={`text-4xl ${
-									isAddTasksButtonActive ? "rotate-45" : ""
-								} dark:text-gray-200`}
+								className={`text-4xl dark:text-gray-200`}
+								style={{
+									transform: [
+										{
+											rotate: isAddTasksButtonActive ? "45deg" : "0deg",
+										},
+									],
+								}}
 							>
 								+
 							</Text>
