@@ -8,9 +8,10 @@ import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
 
-const Home = () => {
+const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
 	const [date, setDate] = useState(new Date());
+	console.log(date);
 	const [reminders, setReminders] = useState([]);
 
 	const filterTasksByType = (type: ReminderType) => {
@@ -145,7 +146,7 @@ const Home = () => {
 
 			<ScrollView className="mt-4 dark">
 				<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
-					{dayjs(date).format("D MMMM")}
+					{dayjs(date)?.format("D MMMM")}
 				</Text>
 				<View className="">
 					<TasksCard

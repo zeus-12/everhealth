@@ -1,7 +1,8 @@
 import { Text, View } from "react-native";
 import Layout from "../components/common/Layout";
+import { Button } from "native-base";
 
-const Leaderboard = () => {
+const Leaderboard = ({ navigation }) => {
 	const SCORE_DATA = [
 		{
 			name: "John",
@@ -41,7 +42,12 @@ const Leaderboard = () => {
 		},
 	];
 	return (
-		<Layout pageHeading="Leaderboard" showAddTasksButton={false}>
+		<Layout
+			pageHeading="Leaderboard"
+			showAddTasksButton={false}
+			showBackButton={true}
+			onBackButtonPress={() => navigation.goBack()}
+		>
 			<View className="space-y-5 mt-4">
 				{SCORE_DATA.map((score, index) => (
 					<View className="flex-row justify-between" key={index}>

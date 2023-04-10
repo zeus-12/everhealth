@@ -1,13 +1,17 @@
 {
-  "expo": {
-    "name": "gfg-hackathon",
-    "slug": "gfg-hackathon",
-    "version": "1.0.0",
-    "sdkVersion": "48.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ]
-  }
+	"expo": {
+		"name": "gfg-hackathon",
+		"slug": "gfg-hackathon",
+		"version": "1.0.0",
+		"sdkVersion": "48.0.0",
+		"platforms": ["ios", "android", "web"],
+		"extra": {
+			"eas": {
+				"projectId": "b242ef49-4303-46a7-91f9-ece452b4efc9"
+			}
+		},
+		"android": {
+			"package": "com.nishan5002p.gfghackathon"
+		}
+	}
 }

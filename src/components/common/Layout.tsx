@@ -2,6 +2,7 @@ import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import Heading from "./Heading";
 import { useState } from "react";
 import { getScreenHeightWithoutTabs } from "../../lib/constants";
+import { Ionicons } from "@expo/vector-icons";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
@@ -11,6 +12,8 @@ const Layout = ({
 	pageHeading,
 	children,
 	showHeader = false,
+	showBackButton = false,
+	onBackButtonPress = () => {},
 	showAddTasksButton = true,
 }) => {
 	const [isAddTasksButtonActive, setIsAddTasksButtonActive] = useState(false);
@@ -25,7 +28,22 @@ const Layout = ({
 			style={{ minHeight: getScreenHeightWithoutTabs() }}
 		>
 			<SafeAreaView className="mx-4 flex-1">
-				<Heading>{pageHeading}</Heading>
+				<View className="flex-row justify-between item-center">
+					<View className="flex-row items-center">
+						{showBackButton && (
+							<Ionicons
+								onPress={onBackButtonPress}
+								name="arrow-back-outline"
+								size={24}
+								className="text-black dark:text-slate-100"
+							/>
+						)}
+						<Heading>{pageHeading}</Heading>
+					</View>
+					<View className="bg-gray-300 dark:bg-gray-800 p-1 rounded-full">
+						<Text className="dark:text-slate-100 text-lg font-bold">🔥 10</Text>
+					</View>
+				</View>
 				<View className="mt-2 grow">{children}</View>
 				{showAddTasksButton && (
 					<>

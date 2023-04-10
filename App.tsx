@@ -18,10 +18,10 @@ import { useColorScheme } from "nativewind";
 import MedicalData from "./src/screens/MedicalData";
 import Leaderboard from "./src/screens/Leaderboard";
 
-export default function App() {
-	const Tab = createBottomTabNavigator();
-	const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
+export default function App() {
 	// use loaded for loading fonts,etc
 	const [loaded, setLoaded] = useState<boolean>(true);
 
@@ -34,6 +34,84 @@ export default function App() {
 		setColorScheme(isDarktheme ? "dark" : "light");
 	}, [isDarktheme]);
 
+	const TabNavigation = () => (
+		<Tab.Navigator
+			// ADD BACKBUTTON
+			screenOptions={({ route }) => ({
+				// remove headertitle
+				headerShown: false,
+
+				tabBarStyle: {
+					backgroundColor: isDarktheme ? "#030712" : "white",
+				},
+			})}
+		>
+			<Tab.Screen
+				name="Home"
+				component={Home}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Entypo name="home" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Medical"
+				component={MedicalData}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<AntDesign name="heart" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Search"
+				component={Search}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Feather name="search" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Feed"
+				component={Feed}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Ionicons name="newspaper" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="User"
+				component={UserStack}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Feather name="user" size={size} color={color} />
+					),
+				}}
+			/>
+		</Tab.Navigator>
+	);
+
+	const UserStack = () => {
+		return (
+			<Stack.Navigator>
+				<Stack.Screen
+					name="User"
+					component={User}
+					options={{
+						headerShown: false,
+					}}
+				/>
+				<Stack.Screen
+					name="Leaderboard"
+					component={Leaderboard}
+					options={{ headerShown: false }}
+				/>
+			</Stack.Navigator>
+		);
+	};
 	return (
 		<NavigationContainer>
 			<NativeBaseProvider>
@@ -42,63 +120,7 @@ export default function App() {
 						<Text>splash screen</Text>
 					</SafeAreaView>
 				) : hasOnboarded ? (
-					<Tab.Navigator
-						// ADD BACKBUTTON
-						screenOptions={({ route }) => ({
-							// remove headertitle
-							headerShown: false,
-
-							tabBarStyle: {
-								backgroundColor: isDarktheme ? "#030712" : "white",
-							},
-						})}
-					>
-						<Tab.Screen
-							name="Home"
-							component={Home}
-							options={{
-								tabBarIcon: ({ focused, color, size }) => (
-									<Entypo name="home" size={size} color={color} />
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="Medical"
-							component={Leaderboard}
-							options={{
-								tabBarIcon: ({ focused, color, size }) => (
-									<AntDesign name="heart" size={size} color={color} />
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="Search"
-							component={Search}
-							options={{
-								tabBarIcon: ({ focused, color, size }) => (
-									<Feather name="search" size={size} color={color} />
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="Feed"
-							component={Feed}
-							options={{
-								tabBarIcon: ({ focused, color, size }) => (
-									<Ionicons name="newspaper" size={size} color={color} />
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="User"
-							component={User}
-							options={{
-								tabBarIcon: ({ focused, color, size }) => (
-									<Feather name="user" size={size} color={color} />
-								),
-							}}
-						/>
-					</Tab.Navigator>
+					<TabNavigation />
 				) : (
 					<Stack.Navigator
 						// ADD BACKBUTTON
