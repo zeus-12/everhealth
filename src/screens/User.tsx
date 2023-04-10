@@ -28,6 +28,7 @@ const User = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [modalTitle, setModalTitle] = useState("");
 	const [modalValue, setModalValue] = useState("");
+	const [showLogoutConfirmationModal, setShowLogoutConfirmationModal] = useState(false);
 
 	const userSettingsButtons: UserSettingsButtonsType[] = [
 		{
@@ -61,6 +62,7 @@ const User = () => {
 			title: "Logout",
 			onClick: () => {
 				// add confirmation modal
+				setShowLogoutConfirmationModal(true);
 				// delete db
 				resetAll();
 				resetAllAppSettings();
@@ -82,6 +84,14 @@ const User = () => {
 	const handleModalCancel = () => {
 		setShowModal(false);
 	};
+
+	const handleLogout = () => {
+		setShowLogoutConfirmationModal(false);
+		// delete db
+		resetAll();
+		resetAllAppSettings();
+	};
+
 
 	const userSettingsToggles = [
 		{
@@ -146,7 +156,9 @@ const User = () => {
 				value={modalValue}
 				onSave={handleModalSave}
 				onCancel={handleModalCancel}
+				onLogout={handleLogout}
 				showModal={showModal}
+				showLogoutConfirmationModal={showLogoutConfirmationModal}
 			/>
 		</Layout>
 	);
