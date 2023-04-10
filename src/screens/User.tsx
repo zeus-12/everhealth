@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { Switch } from "native-base";
+import {
+	Button,
+	Modal,
+	FormControl,
+	Input,
+	Center,
+	NativeBaseProvider} from "native-base";
+
 
 interface UserSettingsButtonsType {
 	title: string;
@@ -13,7 +21,7 @@ interface UserSettingsButtonsType {
 }
 
 const User = () => {
-	const { resetAll, height, age, weight, name } = useUserStore((s) => s);
+	const { resetAll, height, age, weight, name,setAge } = useUserStore((s) => s);
 	const { resetAll: resetAllAppSettings } = useAppSettings((s) => s);
 
 	const {
@@ -23,10 +31,13 @@ const User = () => {
 		setAllowNotifications,
 	} = useAppSettings((s) => s);
 
+	const [showModal, setShowModal] = useState(false);
+    const [newAge, setNewAge] = useState(age);
+
 	const userSettingsButtons: UserSettingsButtonsType[] = [
 		{
 			title: "Age",
-			onClick: () => {},
+			onClick: () => setShowModal(true),
 			value: age,
 		},
 		{
@@ -49,6 +60,16 @@ const User = () => {
 			},
 		},
 	];
+
+	const handleSaveAge = () => {
+		// Update the age value in the store
+		setAge(newAge);
+		setShowModal(false);
+	  };
+	
+	  const handleCancelAge = () => {
+		setShowModal(false);
+	  };
 
 	const userSettingsToggles = [
 		{
@@ -106,6 +127,26 @@ const User = () => {
 						</TouchableOpacity>
 					))}
 				</View>
+				<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content>
+          <Modal.Header>Edit Age</Modal.Header>
+          <Modal.Body>
+            <FormControl >
+              <Input
+                placeholder="Enter new age"
+                value={newAge}
+                onChangeText={(value) => setNewAge(value)}
+              />
+            </FormControl>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group variant="ghost" space={2}>
+              <Button onPress={handleCancelAge}>Cancel</Button>
+              <Button onPress={handleSaveAge}>Save</Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
 			</ScrollView>
 		</Layout>
 	);
