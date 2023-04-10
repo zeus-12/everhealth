@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { Switch } from "native-base";
-import { deleteDatabase } from "@/lib/utils";
+import { deleteDatabase } from "@/lib/db";
 
 interface UserSettingsButtonsType {
 	title: string;

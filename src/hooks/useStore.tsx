@@ -1,11 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme } from "nativewind";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-interface Types {
-	hasOnboarded: boolean;
-	setHasOnBoarded: (hasOnboarded: boolean) => void;
-}
 
 export const useUserStore = create<any>(
 	persist(
