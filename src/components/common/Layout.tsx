@@ -92,7 +92,7 @@ const Layout = ({
 									}}
 								>
 									<TouchableOpacity
-										onPress={() => console.log("add personal growth task")}
+										onPress={() => console.log("add task of " + item.icon)}
 										className="w-14 justify-center items-center h-14 rounded-full bg-gray-400"
 									>
 										<Text className="text-3xl">{item.icon}</Text>

@@ -7,12 +7,6 @@ import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { Button, FormControl, Input, Modal, Switch } from "native-base";
 import { deleteDatabase } from "@/lib/db";
 
-interface UserSettingsButtonsType {
-	title: string;
-	onClick: () => void;
-	value?: string;
-}
-
 const User = ({ navigation }) => {
 	const { resetAll, height, age, weight, name, setAge, setWeight, setHeight } =
 		useUserStore((s) => s);
@@ -31,6 +25,11 @@ const User = ({ navigation }) => {
 		resetAllAppSettings();
 	};
 
+	enum ElementType {
+		SWITCH = "SWITCH",
+		STRING = "STRING",
+	}
+
 	const modalTitleValueMapping = {
 		Age: { state: age, setState: setAge },
 		Height: { state: height, setState: setHeight },
@@ -42,55 +41,6 @@ const User = ({ navigation }) => {
 		setShowEditModal(true);
 	};
 
-	const userSettingsButtons: UserSettingsButtonsType[] = [
-		{
-			title: "Age",
-			onClick: () => {
-				updateEditModalTitleAndShow("Age");
-			},
-			value: age,
-		},
-		{
-			title: "Height",
-			onClick: () => {
-				updateEditModalTitleAndShow("Height");
-			},
-			value: height,
-		},
-		{
-			title: "Weight",
-			onClick: () => {
-				updateEditModalTitleAndShow("Weight");
-			},
-			value: weight,
-		},
-		{
-			title: "Logout",
-			onClick: () => {
-				// add confirmation modal
-				// delete db
-				setShowLogoutWarningModal(true);
-			},
-		},
-	];
-
-	const userSettingsToggles = [
-		{
-			title: "Dark Mode",
-			onClick: (newVal: boolean) => {
-				setIsDarktheme(newVal);
-			},
-			value: isDarktheme,
-		},
-		{
-			title: "Enable Notifications",
-			onClick: (newVal: boolean) => {
-				setAllowNotifications(newVal);
-			},
-			value: allowNotifications,
-		},
-	];
-
 	const [showLogoutWarningModal, setShowLogoutWarningModal] = useState(false);
 	const closeLogoutWarningModal = () => setShowLogoutWarningModal(false);
 
@@ -98,6 +48,57 @@ const User = ({ navigation }) => {
 	const closeEditModal = () => setShowEditModal(false);
 
 	const [editModalTitle, setEditModalTitle] = useState("");
+
+	const settings = [
+		{
+			type: ElementType.STRING,
+			title: "Age",
+			value: age,
+			onClick: () => {
+				updateEditModalTitleAndShow("Age");
+			},
+		},
+		{
+			type: ElementType.STRING,
+			title: "Height",
+			value: height,
+			onClick: () => {
+				updateEditModalTitleAndShow("Height");
+			},
+		},
+		{
+			type: ElementType.STRING,
+			title: "Weight",
+			value: weight,
+			onClick: () => {
+				updateEditModalTitleAndShow("Weight");
+			},
+		},
+		{
+			type: ElementType.SWITCH,
+			title: "Dark Mode",
+			value: isDarktheme,
+			onClick: (newVal: boolean) => {
+				setIsDarktheme(newVal);
+			},
+		},
+		{
+			type: ElementType.SWITCH,
+			title: "Allow Notifications",
+			value: allowNotifications,
+			onClick: (newVal: boolean) => {
+				setAllowNotifications(newVal);
+			},
+		},
+		{
+			type: ElementType.STRING,
+			title: "Logout",
+			onClick: () => {
+				setShowLogoutWarningModal(true);
+			},
+			tw: "text-red-400",
+		},
+	];
 
 	return (
 		<Layout pageHeading="User">
@@ -110,35 +111,44 @@ const User = ({ navigation }) => {
 					placeholder={blurHash}
 					className="h-32 w-32 mx-auto rounded-lg"
 				/>
+
 				<Text className="text-2xl font-semibold text-center dark:text-slate-200">
 					{name}
 				</Text>
 				<TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
 					<Text className="text-center dark:text-slate-400">See leaderboard</Text>
 				</TouchableOpacity>
-				{/* usersettings */}
+
 				<View className="mt-4 rouned-md rounded-xl bg-white dark:bg-gray-800 divide-y-[0.175px] divide-gray-500">
-					{userSettingsToggles.map((setting) => (
-						<View
-							className="py-3 flex-row px-4 justify-between text-start"
-							key={setting.title}
-						>
-							<Text className="text-lg dark:text-slate-100">{setting.title}</Text>
-							<Switch size="md" value={setting.value} onToggle={setting.onClick} />
-						</View>
-					))}
-					{userSettingsButtons.map((setting) => (
-						<TouchableOpacity
-							key={setting.title}
-							className="py-3 flex-row px-4 justify-between text-start"
-							onPress={setting.onClick}
-						>
-							<Text className="text-lg dark:text-slate-100">{setting.title}</Text>
-							{setting.value && (
-								<Text className="text-lg dark:text-slate-100">{setting.value}</Text>
-							)}
-						</TouchableOpacity>
-					))}
+					{settings.map((setting) =>
+						setting.type === ElementType.STRING ? (
+							<TouchableOpacity
+								key={setting.title}
+								className="py-3 flex-row px-4 justify-between text-start"
+								// @ts-ignore
+								onPress={setting.onClick}
+							>
+								<Text
+									className={`text-lg dark:text-slate-100 ${
+										setting.tw ? setting.tw : ""
+									}`}
+								>
+									{setting.title}
+								</Text>
+								{setting.value && (
+									<Text className="text-lg dark:text-slate-100">{setting.value}</Text>
+								)}
+							</TouchableOpacity>
+						) : (
+							<View
+								className="py-3 flex-row px-4 justify-between text-start"
+								key={setting.title}
+							>
+								<Text className="text-lg dark:text-slate-100">{setting.title}</Text>
+								<Switch size="md" value={setting.value} onToggle={setting.onClick} />
+							</View>
+						)
+					)}
 				</View>
 			</ScrollView>
 			<LogoutWarningModal
@@ -168,7 +178,9 @@ const EditModal = ({
 	updateValue,
 	showEditModal,
 }) => {
-	const [newValue, setNewValue] = useState(intialValue);
+	const [newValue, setNewValue] = useState(
+		typeof intialValue === "number" ? intialValue.toString() : intialValue
+	);
 
 	const handleSave = () => {
 		// todo do validation

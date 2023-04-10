@@ -1,6 +1,5 @@
 import { Text, View } from "react-native";
 import Layout from "../components/common/Layout";
-import { Button } from "native-base";
 
 const Leaderboard = ({ navigation }) => {
 	const SCORE_DATA = [
