@@ -8,6 +8,14 @@
       "ios",
       "android",
       "web"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b242ef49-4303-46a7-91f9-ece452b4efc9"
+      }
+    },
+    "android": {
+      "package": "com.nishan5002p.gfghackathon"
+    }
   }
 }
