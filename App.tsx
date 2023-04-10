@@ -11,10 +11,12 @@ import User from "@/screens/User";
 import UserData from "@/screens/onboarding/UserData";
 import OnboardingWelcome from "@/screens/onboarding/Welcome";
 
-import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather, Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { useColorScheme } from "nativewind";
+import MedicalData from "./src/screens/MedicalData";
+import Leaderboard from "./src/screens/Leaderboard";
 
 export default function App() {
 	const Tab = createBottomTabNavigator();
@@ -57,6 +59,15 @@ export default function App() {
 							options={{
 								tabBarIcon: ({ focused, color, size }) => (
 									<Entypo name="home" size={size} color={color} />
+								),
+							}}
+						/>
+						<Tab.Screen
+							name="Medical"
+							component={Leaderboard}
+							options={{
+								tabBarIcon: ({ focused, color, size }) => (
+									<AntDesign name="heart" size={size} color={color} />
 								),
 							}}
 						/>
