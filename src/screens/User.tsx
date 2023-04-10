@@ -5,14 +5,7 @@ import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { Switch } from "native-base";
-import {
-	Button,
-	Modal,
-	FormControl,
-	Input,
-	Center,
-	NativeBaseProvider} from "native-base";
-
+import ModalBox from "@components/Modal/ModalBox";
 
 interface UserSettingsButtonsType {
 	title: string;
@@ -21,7 +14,8 @@ interface UserSettingsButtonsType {
 }
 
 const User = () => {
-	const { resetAll, height, age, weight, name,setAge } = useUserStore((s) => s);
+	const { resetAll, height, age, weight, name, setAge, setHeight, setWeight } =
+		useUserStore((s) => s);
 	const { resetAll: resetAllAppSettings } = useAppSettings((s) => s);
 
 	const {
@@ -32,22 +26,35 @@ const User = () => {
 	} = useAppSettings((s) => s);
 
 	const [showModal, setShowModal] = useState(false);
-    const [newAge, setNewAge] = useState(age);
+	const [modalTitle, setModalTitle] = useState("");
+	const [modalValue, setModalValue] = useState("");
 
 	const userSettingsButtons: UserSettingsButtonsType[] = [
 		{
 			title: "Age",
-			onClick: () => setShowModal(true),
+			onClick: () => {
+				setModalTitle("Age");
+				setModalValue(age);
+				setShowModal(true);
+			},
 			value: age,
 		},
 		{
 			title: "Height",
-			onClick: () => {},
+			onClick: () => {
+				setModalTitle("Height");
+				setModalValue(height);
+				setShowModal(true);
+			},
 			value: height,
 		},
 		{
 			title: "Weight",
-			onClick: () => {},
+			onClick: () => {
+				setModalTitle("Weight");
+				setModalValue(weight);
+				setShowModal(true);
+			},
 			value: weight,
 		},
 		{
@@ -61,15 +68,20 @@ const User = () => {
 		},
 	];
 
-	const handleSaveAge = () => {
-		// Update the age value in the store
-		setAge(newAge);
+	const handleModalSave = (newValue: string) => {
 		setShowModal(false);
-	  };
-	
-	  const handleCancelAge = () => {
+		if (modalTitle === "Age") {
+			setAge(newValue);
+		} else if (modalTitle === "Height") {
+			setHeight(newValue);
+		} else if (modalTitle === "Weight") {
+			setWeight(newValue);
+		}
+	};
+
+	const handleModalCancel = () => {
 		setShowModal(false);
-	  };
+	};
 
 	const userSettingsToggles = [
 		{
@@ -127,27 +139,15 @@ const User = () => {
 						</TouchableOpacity>
 					))}
 				</View>
-				<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content>
-          <Modal.Header>Edit Age</Modal.Header>
-          <Modal.Body>
-            <FormControl >
-              <Input
-                placeholder="Enter new age"
-                value={newAge}
-                onChangeText={(value) => setNewAge(value)}
-              />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group variant="ghost" space={2}>
-              <Button onPress={handleCancelAge}>Cancel</Button>
-              <Button onPress={handleSaveAge}>Save</Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
 			</ScrollView>
+
+			<ModalBox
+				title={modalTitle}
+				value={modalValue}
+				onSave={handleModalSave}
+				onCancel={handleModalCancel}
+				showModal={showModal}
+			/>
 		</Layout>
 	);
 };
