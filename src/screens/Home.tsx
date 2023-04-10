@@ -2,24 +2,24 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import DUMMY_TASKS from "@/assets/dummy-tasks";
-import { ReminderType, Reminder } from "../types/storage";
+import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
-import { db } from "../lib/utils";
+import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
 
 const Home = () => {
 	// this state should be controlled to the date picker
 	const [date, setDate] = useState(new Date());
-	console.log(date);
-
-	const tasks = DUMMY_TASKS;
+	const [reminders, setReminders] = useState([]);
 
 	const filterTasksByType = (type: ReminderType) => {
-		if (!tasks || tasks.length === 0) return [];
+		if (!reminders || reminders.length === 0) return [];
 
 		// @ts-ignore
-		const filteredTasks = tasks?.filter((task: Reminder) => task.type === type);
+		const filteredTasks = reminders?.filter(
+			(task: Reminder) => task.type === type
+		);
 
 		return filteredTasks;
 	};
@@ -27,37 +27,54 @@ const Home = () => {
 	useEffect(() => {
 		db.transaction((tx) => {
 			tx.executeSql(
-				"create table if not exists reminders (id text primary key not null, date Date, isCompleted boolean, task text, type text );",
-				[],
-				() => {
-					console.log("Table created successfully!");
-				},
-				(tx, error) => {
-					console.log(`Error creating table: ${error.message}`);
-					return true; // Rollback the transaction
-				}
+				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL);"
 			);
+			fetchReminders(tx);
 		});
 	}, []);
 
-	const addGroupedTask = () => {
+	const fetchReminders = (tx) => {
+		tx.executeSql(
+			"SELECT * FROM reminders",
+			[],
+			(_, { rows }) => {
+				setReminders(rows._array);
+			},
+			(tx, error) => {
+				console.log(`Error fetching reminders: ${error.message}`);
+				return true; // Rollback the transaction
+			}
+		);
+	};
+
+	const addGroupedReminder = ({
+		dates,
+		task,
+		type,
+		times,
+	}: {
+		dates: string[];
+		task: string;
+		type: ReminderType;
+		times: string[];
+	}) => {
 		// do all validation at component level
 
-		// FROM USER
-		const DATES = ["2021-06-13", "2021-06-14", "2021-06-15"];
-		const TIMES = ["12:30", "5:30", "20:30"];
-		const TASK = "do workout";
-		const TYPE = ReminderType.PERSONAL_GROWTH;
+		// const DATES = ["2021-06-13", "2021-06-14", "2021-06-15"];
+		// const TIMES = ["12:30", "5:30", "20:30"];
+		// const TASK = "do workout";
+		// const TYPE = ReminderType.PERSONAL_GROWTH;
 
 		const group_id = uuidv4();
 
-		DATES.forEach(() => {
-			TIMES.forEach((time) => {
-				const reminderPayload: Reminder = {
-					task: TASK,
-					type: TYPE,
+		dates.forEach((date) => {
+			times.forEach((time) => {
+				const reminderPayload = {
+					task,
+					type,
 					date,
 					time,
+					isCompleted: false,
 					id: uuidv4(),
 					group_id,
 				};
@@ -67,19 +84,59 @@ const Home = () => {
 		});
 	};
 
-	const addIndividualTask = (taskPayload: Reminder) => {
-		const { task, type, date, time, id, group_id } = taskPayload;
+	const deleteReminderById = (id: string) => {
+		db.transaction((tx) => {
+			tx.executeSql(
+				"DELETE FROM reminders WHERE id = ?",
+				[id],
+				(_, result) => {
+					console.log(`Rows deleted: ${result.rowsAffected}`);
+					fetchReminders(tx);
+				},
+				(tx, error) => {
+					console.log(`Error deleting row: ${error.message}`);
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
+	};
 
-		db.transaction(
-			(tx) => {
-				tx.executeSql("insert into items (done, value) values (0, ?)", [text]);
-				tx.executeSql("select * from items", [], (_, { rows }) =>
-					console.log(JSON.stringify(rows))
-				);
-			},
-			null
-			//   forceUpdate
-		);
+	const deleteRemindersByGroupId = (groupId: string) => {
+		db.transaction((tx) => {
+			tx.executeSql(
+				"DELETE FROM reminders WHERE group_id = ?",
+				[groupId],
+				(_, result) => {
+					console.log(`Rows deleted: ${result.rowsAffected}`);
+					fetchReminders(tx);
+				},
+				(tx, error) => {
+					console.log(`Error deleting rows: ${error.message}`);
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
+	};
+
+	const addIndividualTask = (taskPayload) => {
+		const { task, isCompleted, type, date, time, id, group_id } = taskPayload;
+
+		db.transaction((tx) => {
+			tx.executeSql(
+				"INSERT INTO reminders (task, isCompleted, type, date, time, id, group_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+				[task, isCompleted ? 1 : 0, type, date, time, id, group_id],
+				(_, result) => {
+					console.log(`Rows inserted: ${result.rowsAffected}`);
+					tx.executeSql("SELECT * FROM reminders", [], (_, { rows }) => {
+						console.log(JSON.stringify(rows));
+					});
+				},
+				(tx, error) => {
+					console.log(`Error inserting row: ${error.message}`);
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
 	};
 
 	return (
@@ -94,18 +151,21 @@ const Home = () => {
 				</Text>
 				<View className="">
 					<TasksCard
+						fetchReminders={fetchReminders}
 						bgColor="bg-blue-400"
 						title="Personal Growth"
 						tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
 						emptyTasksMessage={"No Personal Growth tasks for the day!"}
 					/>
 					<TasksCard
+						fetchReminders={fetchReminders}
 						bgColor="bg-orange-400"
 						title="Medication"
 						tasks={filterTasksByType(ReminderType.MEDICATION)}
 						emptyTasksMessage={"No Medication Reminders for the day!"}
 					/>
 					<TasksCard
+						fetchReminders={fetchReminders}
 						bgColor="bg-pink-400"
 						title="Doctor Visits"
 						tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
@@ -118,7 +178,30 @@ const Home = () => {
 };
 export default Home;
 
-const TasksCard = ({ bgColor, title, tasks, emptyTasksMessage }) => {
+const TasksCard = ({
+	bgColor,
+	title,
+	tasks,
+	emptyTasksMessage,
+	fetchReminders,
+}) => {
+	const updateTaskStatus = (id: string, isCompleted: boolean) => {
+		db.transaction((tx) => {
+			tx.executeSql(
+				"UPDATE reminders SET isCompleted = ? WHERE id = ?",
+				[isCompleted ? 1 : 0, id],
+				(_, result) => {
+					console.log(`Rows updated: ${result.rowsAffected}`);
+					fetchReminders(tx);
+				},
+				(tx, error) => {
+					console.log(`Error updating row: ${error.message}`);
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
+	};
+
 	return (
 		<TouchableOpacity className={`${bgColor} p-4 mt-4 rounded-lg`}>
 			<Text className="text-white text-2xl font-semibold tracking-tight">
@@ -128,11 +211,15 @@ const TasksCard = ({ bgColor, title, tasks, emptyTasksMessage }) => {
 				tasks.map((task) => (
 					//todo replace key with id
 					<View key={task.task} className="flex">
-						<Checkbox defaultIsChecked={task.isCompleted} value="info">
+						<Checkbox
+							isChecked={task.isCompleted === 1}
+							onChange={(newVal) => updateTaskStatus(task.id, newVal)}
+							value={task.task}
+						>
 							<Text
 								className={` text-white text-2xl font-semibold tracking-tight ${
 									// make this change when value is toggled
-									task.isCompleted ? "line-through" : ""
+									task.isCompleted === 1 ? "line-through" : ""
 								}`}
 							>
 								{task.task}
