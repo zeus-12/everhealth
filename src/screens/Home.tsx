@@ -127,9 +127,7 @@ const Home = () => {
 				[task, isCompleted ? 1 : 0, type, date, time, id, group_id],
 				(_, result) => {
 					console.log(`Rows inserted: ${result.rowsAffected}`);
-					tx.executeSql("SELECT * FROM reminders", [], (_, { rows }) => {
-						console.log(JSON.stringify(rows));
-					});
+					fetchReminders(tx);
 				},
 				(tx, error) => {
 					console.log(`Error inserting row: ${error.message}`);
@@ -187,6 +185,7 @@ const TasksCard = ({
 }) => {
 	const updateTaskStatus = (id: string, isCompleted: boolean) => {
 		db.transaction((tx) => {
+			// todo make sure the date is date.now() format it accodingly
 			tx.executeSql(
 				"UPDATE reminders SET isCompleted = ? WHERE id = ?",
 				[isCompleted ? 1 : 0, id],
