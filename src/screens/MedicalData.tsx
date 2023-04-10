@@ -4,7 +4,7 @@ import Layout from "../components/common/Layout";
 const MedicalData = () => {
 	return (
 		<Layout pageHeading="Doctor">
-			<Text>hi</Text>
+			<Text className="dark:text-white">hi</Text>
 		</Layout>
 	);
 };
