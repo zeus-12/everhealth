@@ -208,27 +208,29 @@ const Home = ({ navigation }) => {
 						/> */}
 					</TouchableOpacity>
 				</View>
-				<TasksCard
-					fetchRemindersByDate={fetchRemindersByDate}
-					bgColor="bg-blue-400"
-					title="Personal Growth"
-					tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
-					emptyTasksMessage={"No Personal Growth tasks for the day!"}
-				/>
-				<TasksCard
-					fetchRemindersByDate={fetchRemindersByDate}
-					bgColor="bg-orange-400"
-					title="Medication"
-					tasks={filterTasksByType(ReminderType.MEDICATION)}
-					emptyTasksMessage={"No Medication Reminders for the day!"}
-				/>
-				<TasksCard
-					fetchRemindersByDate={fetchRemindersByDate}
-					bgColor="bg-pink-400"
-					title="Doctor Visits"
-					tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
-					emptyTasksMessage={"No Doctor Visits scheduled for the day!"}
-				/>
+				<View>
+					<TasksCard
+						fetchRemindersByDate={fetchRemindersByDate}
+						bgColor="bg-blue-400"
+						title="Personal Growth"
+						tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
+						emptyTasksMessage={"No Personal Growth tasks for the day!"}
+					/>
+					<TasksCard
+						fetchRemindersByDate={fetchRemindersByDate}
+						bgColor="bg-orange-400"
+						title="Medication"
+						tasks={filterTasksByType(ReminderType.MEDICATION)}
+						emptyTasksMessage={"No Medication Reminders for the day!"}
+					/>
+					<TasksCard
+						fetchRemindersByDate={fetchRemindersByDate}
+						bgColor="bg-pink-400"
+						title="Doctor Visits"
+						tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
+						emptyTasksMessage={"No Doctor Visits scheduled for the day!"}
+					/>
+				</View>
 			</ScrollView>
 		</Layout>
 	);
