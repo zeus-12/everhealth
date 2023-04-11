@@ -98,7 +98,7 @@ export default function App() {
 		return (
 			<Stack.Navigator>
 				<Stack.Screen
-					name="User"
+					name="UserStack"
 					component={User}
 					options={{
 						headerShown: false,

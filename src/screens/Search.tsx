@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import Layout from "@components/common/Layout";
 import { Input } from "native-base";
-import { Configuration, OpenAIApi } from "openai";
 
 const Search = () => {
 	const [query, setQuery] = useState("");
