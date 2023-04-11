@@ -1,5 +1,3 @@
-//working final
-
 import React, { useEffect, useRef, useState } from "react";
 import {
 	Animated,
@@ -296,20 +294,18 @@ const TasksCard = ({
 		const task = data.item;
 		return (
 			<Animated.View
-			// style={[
-			// 	// styles.rowFrontContainer,
-			// 	{
-			// 		height: rowTranslateAnimatedValues[data.item.key].interpolate({
-			// 			inputRange: [0, 1],
-			// 			outputRange: [0, 50],
-			// 		}),
-			// 	},
-			// ]}
+				style={[
+					{
+						height: rowTranslateAnimatedValues[data.item.key].interpolate({
+							inputRange: [0, 1],
+							outputRange: [0, 60],
+						}),
+					},
+				]}
 			>
 				<TouchableHighlight
 					onPress={() => console.log("You touched me")}
 					style={styles.rowFront}
-
 					// underlayColor={"#AAA"}
 				>
 					<View
@@ -372,13 +368,8 @@ const TasksCard = ({
 };
 
 const styles = StyleSheet.create({
-	container: {
-		// backgroundColor: "white",
-		// flex: 1,
-	},
 	rowFront: {
 		alignItems: "center",
-		// backgroundColor: "#CCC",
 		borderBottomColor: "black",
 		borderBottomWidth: 1,
 		justifyContent: "center",
