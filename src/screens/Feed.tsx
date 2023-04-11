@@ -8,16 +8,18 @@ const Feed = () => {
 	return (
 		<Layout pageHeading="Feeds">
 			{/* todo add some margin at bottom */}
-			<ScrollView>
-				{DUMMY_DATA.items.map((item) => (
-					<FeedCard
-						articleUrl={item.url}
-						key={item.id}
-						image={item.image}
-						publishedDate={item.date_published}
-						title={item.title}
-					/>
-				))}
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<View className="mb-12">
+					{DUMMY_DATA.items.map((item) => (
+						<FeedCard
+							articleUrl={item.url}
+							key={item.id}
+							image={item.image}
+							publishedDate={item.date_published}
+							title={item.title}
+						/>
+					))}
+				</View>
 			</ScrollView>
 		</Layout>
 	);

@@ -4,11 +4,11 @@ import Layout from "@components/common/Layout";
 import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
 import { db } from "@/lib/db";
-import { v4 as uuidv4 } from "uuid";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import { AntDesign } from "@expo/vector-icons";
 import { useAppSettings } from "../hooks/useStore";
+import { randomUUID } from "expo-crypto";
 
 const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
@@ -39,19 +39,40 @@ const Home = ({ navigation }) => {
 
 	const fetchRemindersByDate = (tx) => {
 		tx.executeSql(
-			"SELECT * FROM reminders WHERE date = ?",
+			"SELECT * FROM reminders WHERE date = ? ORDER BY time ASC",
 			[dayjs(date).format("YYYY-MM-DD")],
 			(_, { rows }) => {
 				console.log(
 					`fetched tasks for the date ${dayjs(date).format("YYYY-MM-DD")}`
 				);
-				setReminders(rows._array);
+				// Sort by time
+				const sortedRows = rows._array.sort((a, b) => a.time.localeCompare(b.time));
+				setReminders(sortedRows);
 			},
 			(tx, error) => {
 				console.log(`Error fetching reminders: ${error.message}`);
 				return true; // Rollback the transaction
 			}
 		);
+	};
+
+	const addIndividualTask = (taskPayload) => {
+		const { task, isCompleted, type, date, time, id, group_id } = taskPayload;
+
+		db.transaction((tx) => {
+			tx.executeSql(
+				"INSERT INTO reminders (task, isCompleted, type, date, time, id, group_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+				[task, isCompleted ? 1 : 0, type, date, time, id, group_id],
+				(_, result) => {
+					console.log(`Rows inserted: ${result.rowsAffected}`);
+					fetchRemindersByDate(tx);
+				},
+				(tx, error) => {
+					console.log(`Error inserting row: ${error.message}`);
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
 	};
 
 	const addGroupedReminder = ({
@@ -65,14 +86,7 @@ const Home = ({ navigation }) => {
 		type: ReminderType;
 		times: string[];
 	}) => {
-		// do all validation at component level
-
-		// const DATES = ["2021-06-13", "2021-06-14", "2021-06-15"];
-		// const TIMES = ["12:30", "5:30", "20:30"];
-		// const TASK = "do workout";
-		// const TYPE = ReminderType.PERSONAL_GROWTH;
-
-		const group_id = uuidv4();
+		const group_id = randomUUID();
 
 		dates.forEach((date) => {
 			times.forEach((time) => {
@@ -82,7 +96,7 @@ const Home = ({ navigation }) => {
 					date,
 					time,
 					isCompleted: false,
-					id: uuidv4(),
+					id: randomUUID(),
 					group_id,
 				};
 
@@ -90,6 +104,16 @@ const Home = ({ navigation }) => {
 			});
 		});
 	};
+	// deleteTable("reminders");
+
+	// useEffect(() => {
+	// 	addGroupedReminder({
+	// 		dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
+	// 		task: "eat dollo",
+	// 		type: ReminderType.MEDICATION,
+	// 		times: ["12:30", "5:30", "20:30"],
+	// 	});
+	// }, []);
 
 	const deleteReminderById = (id: string) => {
 		db.transaction((tx) => {
@@ -125,33 +149,14 @@ const Home = ({ navigation }) => {
 		}, null);
 	};
 
-	const addIndividualTask = (taskPayload) => {
-		const { task, isCompleted, type, date, time, id, group_id } = taskPayload;
-
-		db.transaction((tx) => {
-			tx.executeSql(
-				"INSERT INTO reminders (task, isCompleted, type, date, time, id, group_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-				[task, isCompleted ? 1 : 0, type, date, time, id, group_id],
-				(_, result) => {
-					console.log(`Rows inserted: ${result.rowsAffected}`);
-					fetchRemindersByDate(tx);
-				},
-				(tx, error) => {
-					console.log(`Error inserting row: ${error.message}`);
-					return true; // Rollback the transaction
-				}
-			);
-		}, null);
-	};
-
 	// addIndividualTask({
-	// 	task: "do abcd",
+	// 	task: "do LASTE",
 	// 	isCompleted: false,
 	// 	type: ReminderType.PERSONAL_GROWTH,
-	// 	time: "12:30",
+	// 	time: "06:30",
 	// 	date: "2023-04-11",
-	// 	id: "efeadasdfad1212",
-	// 	group_id: "asdASDa",
+	// 	id: "efeadASDFS2asdfad1212",
+	// 	group_id: "LAST",
 	// });
 
 	const [showDatePicker, setShowDatePicker] = useState(false);
@@ -159,11 +164,11 @@ const Home = ({ navigation }) => {
 
 	return (
 		<Layout pageHeading="Home">
-			<Text className="text-gray-700 dark:text-gray-400 text-xl -mt-2 font-medium tracking-tight">
+			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
 
-			<ScrollView className="mt-4 dark" showsVerticalScrollIndicator={false}>
+			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
 					<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
 						{dayjs(date)?.format("D MMMM")}
@@ -249,39 +254,41 @@ const TasksCard = ({
 	};
 
 	return (
-		<TouchableOpacity className={`${bgColor} p-4 mt-4 rounded-lg`}>
+		<View className={`${bgColor} p-4 mt-4 rounded-lg`}>
 			<Text className="text-white text-2xl font-semibold tracking-tight">
 				{title}
 			</Text>
-			{tasks?.length > 0 ? (
-				tasks.map((task) => (
-					//todo replace key with id
-					<View key={task.id} className="flex-rowgap-3 mt-2">
-						<Checkbox
-							className="rounded-full w-6 h-6"
-							isChecked={task.isCompleted === 1}
-							onChange={(newVal) => updateTaskStatus(task.id, newVal)}
-							value={task.task}
-						>
-							<View>
-								<Text
-									className={` text-white text-3xl font-semibold tracking-tight ${
-										// make this change when value is toggled
-										task.isCompleted === 1 ? "line-through" : ""
-									}`}
-								>
-									{task.task}
-								</Text>
-								<Text className="text-slate-800">{task.time}</Text>
-							</View>
-						</Checkbox>
-					</View>
-				))
-			) : (
-				<Text className="text-white text-xl font-semibold tracking-tight">
-					{emptyTasksMessage}
-				</Text>
-			)}
-		</TouchableOpacity>
+			<View className="divide-y-[0.175px] divide-gray-500">
+				{tasks?.length > 0 ? (
+					tasks.map((task) => (
+						//todo replace key with id
+						<View key={task.id} className="flex-rowgap-3 mt-2">
+							<Checkbox
+								className="rounded-full w-6 h-6"
+								isChecked={task.isCompleted === 1}
+								onChange={(newVal) => updateTaskStatus(task.id, newVal)}
+								value={task.task}
+							>
+								<View>
+									<Text
+										className={` text-white text-3xl font-semibold tracking-tight ${
+											// make this change when value is toggled
+											task.isCompleted === 1 ? "line-through" : ""
+										}`}
+									>
+										{task.task}
+									</Text>
+									<Text className="text-slate-800">{task.time}</Text>
+								</View>
+							</Checkbox>
+						</View>
+					))
+				) : (
+					<Text className="text-white text-xl font-semibold tracking-tight">
+						{emptyTasksMessage}
+					</Text>
+				)}
+			</View>
+		</View>
 	);
 };

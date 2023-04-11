@@ -8,16 +8,18 @@ import {
 } from "react-native";
 import Layout from "@components/common/Layout";
 import { Input } from "native-base";
+import { Configuration, OpenAIApi } from "openai";
 
 const Search = () => {
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState([]);
 
-	const queryHandler = () => {
+	const queryHandler = async () => {
 		if (!query.trim()) return;
 
 		// send req to gpt
 	};
+	queryHandler();
 
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -33,7 +35,7 @@ const Search = () => {
 					onChangeText={(text) => setQuery(text)}
 				/>
 
-				<ScrollView>
+				<ScrollView showsVerticalScrollIndicator={false}>
 					{results.length > 0 ? (
 						<View>{/* print result from gpt */}</View>
 					) : (

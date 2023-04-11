@@ -102,7 +102,7 @@ const User = ({ navigation }) => {
 
 	return (
 		<Layout pageHeading="User">
-			<ScrollView className="grow">
+			<ScrollView showsVerticalScrollIndicator={false} className="grow">
 				{/* todo use image from assets instead */}
 				<Image
 					source={"https://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png"}
@@ -224,21 +224,26 @@ const LogoutWarningModal = ({
 }) => {
 	return (
 		<Modal isOpen={showLogoutWarningModal} onClose={closeLogoutWarningModal}>
-			<Modal.Content>
-				<Modal.CloseButton />
-				<Modal.Header>Logout Confirmation</Modal.Header>
-				<Modal.Body>
-					<View>
-						<Text>Are you sure you want to logout?</Text>
-					</View>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button onPress={closeLogoutWarningModal}>Cancel</Button>
-					<Button colorScheme="danger" onPress={handleLogout}>
-						Logout
-					</Button>
-				</Modal.Footer>
-			</Modal.Content>
+			<Modal.CloseButton />
+			<View className="p-8 bg-white dark:bg-black rounded-xl">
+				<Text className="font-semibold dark:text-slate-100 text-xl">
+					Confirm logout?
+				</Text>
+				<Text className="dark:text-slate-100">
+					You'll lose all data and this is not reversible.
+				</Text>
+				<Button className="bg-white mt-2 dark:bg-black" onPress={handleLogout}>
+					<Text className="text-lg text-red-600  font-semibold">Logout</Text>
+				</Button>
+				<Button
+					className="bg-white dark:bg-black "
+					onPress={closeLogoutWarningModal}
+				>
+					<Text className="text-lg text-black dark:text-slate-100 font-semibold">
+						Cancel
+					</Text>
+				</Button>
+			</View>
 		</Modal>
 	);
 };

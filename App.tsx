@@ -83,7 +83,7 @@ export default function App() {
 				}}
 			/>
 			<Tab.Screen
-				name="UserStack"
+				name="User"
 				component={UserStack}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
