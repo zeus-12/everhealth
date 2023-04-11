@@ -1,5 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+//working final
+
+import React, { useEffect, useRef, useState } from "react";
+import {
+	Animated,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableHighlight,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Layout from "@components/common/Layout";
 import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
@@ -9,6 +19,8 @@ import dayjs from "dayjs";
 import { AntDesign } from "@expo/vector-icons";
 import { useAppSettings } from "../hooks/useStore";
 import { randomUUID } from "expo-crypto";
+import { SwipeListView } from "react-native-swipe-list-view";
+import { SCREEN_WIDTH } from "../lib/constants";
 
 const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
@@ -25,6 +37,7 @@ const Home = ({ navigation }) => {
 			(task: Reminder) => task.type === type
 		);
 
+		return filteredTasks?.map((ele, i) => ({ key: `${i}`, ...ele }));
 		return filteredTasks;
 	};
 
@@ -109,9 +122,9 @@ const Home = ({ navigation }) => {
 	// useEffect(() => {
 	// 	addGroupedReminder({
 	// 		dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
-	// 		task: "eat dollo",
-	// 		type: ReminderType.MEDICATION,
-	// 		times: ["12:30", "5:30", "20:30"],
+	// 		task: "medicine",
+	// 		type: ReminderType.PERSONAL_GROWTH,
+	// 		times: ["12:30", "05:30", "20:30"],
 	// 	});
 	// }, []);
 
@@ -160,7 +173,6 @@ const Home = ({ navigation }) => {
 	// });
 
 	const [showDatePicker, setShowDatePicker] = useState(false);
-	console.log(showDatePicker);
 
 	return (
 		<Layout pageHeading="Home">
@@ -198,35 +210,39 @@ const Home = ({ navigation }) => {
 						/> */}
 					</TouchableOpacity>
 				</View>
-
-				<View className="">
-					<TasksCard
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-blue-400"
-						title="Personal Growth"
-						tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
-						emptyTasksMessage={"No Personal Growth tasks for the day!"}
-					/>
-					<TasksCard
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-orange-400"
-						title="Medication"
-						tasks={filterTasksByType(ReminderType.MEDICATION)}
-						emptyTasksMessage={"No Medication Reminders for the day!"}
-					/>
-					<TasksCard
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-pink-400"
-						title="Doctor Visits"
-						tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
-						emptyTasksMessage={"No Doctor Visits scheduled for the day!"}
-					/>
-				</View>
+				<TasksCard
+					fetchRemindersByDate={fetchRemindersByDate}
+					bgColor="bg-blue-400"
+					title="Personal Growth"
+					tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
+					emptyTasksMessage={"No Personal Growth tasks for the day!"}
+				/>
+				<TasksCard
+					fetchRemindersByDate={fetchRemindersByDate}
+					bgColor="bg-orange-400"
+					title="Medication"
+					tasks={filterTasksByType(ReminderType.MEDICATION)}
+					emptyTasksMessage={"No Medication Reminders for the day!"}
+				/>
+				<TasksCard
+					fetchRemindersByDate={fetchRemindersByDate}
+					bgColor="bg-pink-400"
+					title="Doctor Visits"
+					tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
+					emptyTasksMessage={"No Doctor Visits scheduled for the day!"}
+				/>
 			</ScrollView>
 		</Layout>
 	);
 };
 export default Home;
+
+const rowTranslateAnimatedValues = {};
+Array(10)
+	.fill("")
+	.forEach((_, i) => {
+		rowTranslateAnimatedValues[`${i}`] = new Animated.Value(1);
+	});
 
 const TasksCard = ({
 	bgColor,
@@ -235,6 +251,10 @@ const TasksCard = ({
 	emptyTasksMessage,
 	fetchRemindersByDate,
 }) => {
+	// const [listData, setListData] = useState(
+	// 	tasks?.map((ele, i) => ({ key: `${i}`, ...ele }))
+	// );
+
 	const updateTaskStatus = (id: string, isCompleted: boolean) => {
 		db.transaction((tx) => {
 			// todo make sure the date is date.now() format it accodingly
@@ -252,43 +272,136 @@ const TasksCard = ({
 			);
 		}, null);
 	};
+	const animationIsRunning = useRef(false);
 
-	return (
-		<View className={`${bgColor} p-4 mt-4 rounded-lg`}>
-			<Text className="text-white text-2xl font-semibold tracking-tight">
-				{title}
-			</Text>
-			<View className="divide-y-[0.175px] divide-gray-500">
-				{tasks?.length > 0 ? (
-					tasks.map((task) => (
-						//todo replace key with id
-						<View key={task.id} className="flex-rowgap-3 mt-2">
-							<Checkbox
-								className="rounded-full w-6 h-6"
-								isChecked={task.isCompleted === 1}
-								onChange={(newVal) => updateTaskStatus(task.id, newVal)}
-								value={task.task}
-							>
-								<View>
-									<Text
-										className={` text-white text-3xl font-semibold tracking-tight ${
-											// make this change when value is toggled
-											task.isCompleted === 1 ? "line-through" : ""
-										}`}
-									>
-										{task.task}
-									</Text>
-									<Text className="text-slate-800">{task.time}</Text>
-								</View>
-							</Checkbox>
-						</View>
-					))
-				) : (
-					<Text className="text-white text-xl font-semibold tracking-tight">
-						{emptyTasksMessage}
-					</Text>
-				)}
+	const onSwipeValueChange = (swipeData) => {
+		const { key, value } = swipeData;
+		if (value < -SCREEN_WIDTH && !animationIsRunning.current) {
+			animationIsRunning.current = true;
+			Animated.timing(rowTranslateAnimatedValues[key], {
+				toValue: 0,
+				duration: 200,
+				useNativeDriver: false,
+			}).start(() => {
+				const newData = [...tasks];
+				const prevIndex = tasks.findIndex((item) => item.key === key);
+				newData.splice(prevIndex, 1);
+				// setListData(newData);
+				animationIsRunning.current = false;
+			});
+		}
+	};
+
+	const renderItem = (data) => {
+		const task = data.item;
+		return (
+			<Animated.View
+			// style={[
+			// 	// styles.rowFrontContainer,
+			// 	{
+			// 		height: rowTranslateAnimatedValues[data.item.key].interpolate({
+			// 			inputRange: [0, 1],
+			// 			outputRange: [0, 50],
+			// 		}),
+			// 	},
+			// ]}
+			>
+				<TouchableHighlight
+					onPress={() => console.log("You touched me")}
+					style={styles.rowFront}
+
+					// underlayColor={"#AAA"}
+				>
+					<View
+						key={task.id}
+						className={`w-full h-full justify-center pl-4 ${bgColor}`}
+					>
+						<Checkbox
+							className="rounded-full w-6 h-6"
+							isChecked={task.isCompleted === 1}
+							onChange={(newVal) => {
+								console.log(newVal);
+								updateTaskStatus(task.id, newVal);
+							}}
+							value={task.task}
+						>
+							<View>
+								<Text
+									className={` text-white text-3xl font-semibold tracking-tight ${
+										task.isCompleted === 1 ? "line-through" : ""
+									}`}
+								>
+									{task.task}
+								</Text>
+								<Text className="text-slate-800">{task.time}</Text>
+							</View>
+						</Checkbox>
+					</View>
+				</TouchableHighlight>
+			</Animated.View>
+		);
+	};
+
+	const renderHiddenItem = () => (
+		<View style={styles.rowBack}>
+			<View style={[styles.backRightBtn, styles.backRightBtnRight]}>
+				<Text className="text-white">Delete</Text>
 			</View>
 		</View>
 	);
+
+	return (
+		<>
+			<View className={`${bgColor} p-4 mt-4 rounded-lg mb-2`}>
+				<Text className="text-white text-2xl font-semibold tracking-tight">
+					{title}
+				</Text>
+			</View>
+			<SwipeListView
+				disableRightSwipe
+				data={tasks}
+				renderItem={renderItem}
+				renderHiddenItem={renderHiddenItem}
+				rightOpenValue={-SCREEN_WIDTH}
+				onSwipeValueChange={onSwipeValueChange}
+				useNativeDriver={false}
+				className={`${bgColor} dark:bg-black rounded-xl`}
+			/>
+		</>
+	);
 };
+
+const styles = StyleSheet.create({
+	container: {
+		// backgroundColor: "white",
+		// flex: 1,
+	},
+	rowFront: {
+		alignItems: "center",
+		// backgroundColor: "#CCC",
+		borderBottomColor: "black",
+		borderBottomWidth: 1,
+		justifyContent: "center",
+		height: 60,
+	},
+	rowBack: {
+		alignItems: "center",
+		backgroundColor: "red",
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingLeft: 15,
+	},
+	backRightBtn: {
+		alignItems: "center",
+		bottom: 0,
+		justifyContent: "center",
+		position: "absolute",
+		top: 0,
+		width: 75,
+	},
+	backRightBtnRight: {
+		backgroundColor: "red",
+		right: 0,
+	},
+});
