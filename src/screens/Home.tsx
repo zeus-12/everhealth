@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
-import DUMMY_TASKS from "@/assets/dummy-tasks";
 import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
 import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
+import { AntDesign } from "@expo/vector-icons";
+import { useAppSettings } from "../hooks/useStore";
 
 const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
 	const [date, setDate] = useState(new Date());
-	console.log(date);
+	const isDarktheme = useAppSettings((s) => s.isDarktheme);
+
 	const [reminders, setReminders] = useState([]);
 
 	const filterTasksByType = (type: ReminderType) => {
@@ -30,15 +33,18 @@ const Home = ({ navigation }) => {
 			tx.executeSql(
 				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL);"
 			);
-			fetchReminders(tx);
+			fetchRemindersByDate(tx);
 		});
-	}, []);
+	}, [date]);
 
-	const fetchReminders = (tx) => {
+	const fetchRemindersByDate = (tx) => {
 		tx.executeSql(
-			"SELECT * FROM reminders",
-			[],
+			"SELECT * FROM reminders WHERE date = ?",
+			[dayjs(date).format("YYYY-MM-DD")],
 			(_, { rows }) => {
+				console.log(
+					`fetched tasks for the date ${dayjs(date).format("YYYY-MM-DD")}`
+				);
 				setReminders(rows._array);
 			},
 			(tx, error) => {
@@ -92,7 +98,7 @@ const Home = ({ navigation }) => {
 				[id],
 				(_, result) => {
 					console.log(`Rows deleted: ${result.rowsAffected}`);
-					fetchReminders(tx);
+					fetchRemindersByDate(tx);
 				},
 				(tx, error) => {
 					console.log(`Error deleting row: ${error.message}`);
@@ -109,7 +115,7 @@ const Home = ({ navigation }) => {
 				[groupId],
 				(_, result) => {
 					console.log(`Rows deleted: ${result.rowsAffected}`);
-					fetchReminders(tx);
+					fetchRemindersByDate(tx);
 				},
 				(tx, error) => {
 					console.log(`Error deleting rows: ${error.message}`);
@@ -128,7 +134,7 @@ const Home = ({ navigation }) => {
 				[task, isCompleted ? 1 : 0, type, date, time, id, group_id],
 				(_, result) => {
 					console.log(`Rows inserted: ${result.rowsAffected}`);
-					fetchReminders(tx);
+					fetchRemindersByDate(tx);
 				},
 				(tx, error) => {
 					console.log(`Error inserting row: ${error.message}`);
@@ -138,33 +144,73 @@ const Home = ({ navigation }) => {
 		}, null);
 	};
 
+	// addIndividualTask({
+	// 	task: "do abcd",
+	// 	isCompleted: false,
+	// 	type: ReminderType.PERSONAL_GROWTH,
+	// 	time: "12:30",
+	// 	date: "2023-04-11",
+	// 	id: "efeadasdfad1212",
+	// 	group_id: "asdASDa",
+	// });
+
+	const [showDatePicker, setShowDatePicker] = useState(false);
+	console.log(showDatePicker);
+
 	return (
 		<Layout pageHeading="Home">
 			<Text className="text-gray-700 dark:text-gray-400 text-xl -mt-2 font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
 
-			<ScrollView className="mt-4 dark">
-				<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
-					{dayjs(date)?.format("D MMMM")}
-				</Text>
+			<ScrollView className="mt-4 dark" showsVerticalScrollIndicator={false}>
+				<View className="flex-row items-center justify-center gap-4">
+					<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
+						{dayjs(date)?.format("D MMMM")}
+					</Text>
+					<TouchableOpacity onPress={() => setShowDatePicker(true)}>
+						<DateTimePicker
+							value={date}
+							onChange={(event, selectedDate) => {
+								// Handle date change here
+								if (event.type === "set") {
+									setShowDatePicker(false);
+									setDate(selectedDate);
+								} else {
+									setShowDatePicker(false);
+								}
+							}}
+							// todo fix type here
+							themeVariant={isDarktheme ? "dark" : "light"}
+							maximumDate={new Date(2024, 10, 20)}
+							minimumDate={new Date(2023, 0, 1)}
+							mode="date"
+						/>
+						{/* <AntDesign
+							name="calendar"
+							size={24}
+							className="text-black dark:text-slate-100"
+						/> */}
+					</TouchableOpacity>
+				</View>
+
 				<View className="">
 					<TasksCard
-						fetchReminders={fetchReminders}
+						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-blue-400"
 						title="Personal Growth"
 						tasks={filterTasksByType(ReminderType.PERSONAL_GROWTH)}
 						emptyTasksMessage={"No Personal Growth tasks for the day!"}
 					/>
 					<TasksCard
-						fetchReminders={fetchReminders}
+						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-orange-400"
 						title="Medication"
 						tasks={filterTasksByType(ReminderType.MEDICATION)}
 						emptyTasksMessage={"No Medication Reminders for the day!"}
 					/>
 					<TasksCard
-						fetchReminders={fetchReminders}
+						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-pink-400"
 						title="Doctor Visits"
 						tasks={filterTasksByType(ReminderType.DOCTOR_VISIT)}
@@ -182,7 +228,7 @@ const TasksCard = ({
 	title,
 	tasks,
 	emptyTasksMessage,
-	fetchReminders,
+	fetchRemindersByDate,
 }) => {
 	const updateTaskStatus = (id: string, isCompleted: boolean) => {
 		db.transaction((tx) => {
@@ -192,7 +238,7 @@ const TasksCard = ({
 				[isCompleted ? 1 : 0, id],
 				(_, result) => {
 					console.log(`Rows updated: ${result.rowsAffected}`);
-					fetchReminders(tx);
+					fetchRemindersByDate(tx);
 				},
 				(tx, error) => {
 					console.log(`Error updating row: ${error.message}`);
@@ -210,20 +256,24 @@ const TasksCard = ({
 			{tasks?.length > 0 ? (
 				tasks.map((task) => (
 					//todo replace key with id
-					<View key={task.task} className="flex">
+					<View key={task.id} className="flex-rowgap-3 mt-2">
 						<Checkbox
+							className="rounded-full w-6 h-6"
 							isChecked={task.isCompleted === 1}
 							onChange={(newVal) => updateTaskStatus(task.id, newVal)}
 							value={task.task}
 						>
-							<Text
-								className={` text-white text-2xl font-semibold tracking-tight ${
-									// make this change when value is toggled
-									task.isCompleted === 1 ? "line-through" : ""
-								}`}
-							>
-								{task.task}
-							</Text>
+							<View>
+								<Text
+									className={` text-white text-3xl font-semibold tracking-tight ${
+										// make this change when value is toggled
+										task.isCompleted === 1 ? "line-through" : ""
+									}`}
+								>
+									{task.task}
+								</Text>
+								<Text className="text-slate-800">{task.time}</Text>
+							</View>
 						</Checkbox>
 					</View>
 				))
