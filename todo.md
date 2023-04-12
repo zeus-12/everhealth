@@ -8,3 +8,5 @@
 - also doctor data with this.
 
 - puppies/cat gifs
+
+- make sure swipe to delete is working.
