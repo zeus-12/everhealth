@@ -1,14 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+	Animated,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableHighlight,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Layout from "@components/common/Layout";
 import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
-import { db } from "@/lib/db";
+import { db, deleteTable } from "@/lib/db";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import { AntDesign } from "@expo/vector-icons";
 import { useAppSettings } from "../hooks/useStore";
 import { randomUUID } from "expo-crypto";
+import { SwipeListView } from "react-native-swipe-list-view";
+import { SCREEN_WIDTH } from "../lib/constants";
 
 const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
@@ -25,16 +35,27 @@ const Home = ({ navigation }) => {
 			(task: Reminder) => task.type === type
 		);
 
+		return filteredTasks?.map((ele, i) => ({ key: `${i}`, ...ele }));
 		return filteredTasks;
 	};
 
 	useEffect(() => {
 		db.transaction((tx) => {
 			tx.executeSql(
-				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL);"
+				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, time TEXT NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL);",
+				[],
+				(_, result) => {
+					// success callback
+					console.log("Table created successfully");
+					fetchRemindersByDate(tx);
+				},
+				(_, error) => {
+					// error callback
+					console.log(`Error creating table: ${error.message}`);
+					return true; // Rollback the transaction
+				}
 			);
-			fetchRemindersByDate(tx);
-		});
+		}, null);
 	}, [date]);
 
 	const fetchRemindersByDate = (tx) => {
@@ -105,16 +126,14 @@ const Home = ({ navigation }) => {
 		});
 	};
 	// deleteTable("reminders");
-
-	// useEffect(() => {
-	// 	addGroupedReminder({
-	// 		dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
-	// 		task: "eat dollo",
-	// 		type: ReminderType.MEDICATION,
-	// 		times: ["12:30", "5:30", "20:30"],
-	// 	});
-	// }, []);
-
+	const addGroupMockData = () => {
+		addGroupedReminder({
+			dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
+			task: "medicine",
+			type: ReminderType.PERSONAL_GROWTH,
+			times: ["12:30", "05:30", "20:30"],
+		});
+	};
 	const deleteReminderById = (id: string) => {
 		db.transaction((tx) => {
 			tx.executeSql(
@@ -160,13 +179,15 @@ const Home = ({ navigation }) => {
 	// });
 
 	const [showDatePicker, setShowDatePicker] = useState(false);
-	console.log(showDatePicker);
 
 	return (
 		<Layout pageHeading="Home">
 			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
+			<TouchableOpacity onPress={() => addGroupMockData()}>
+				<Text>this</Text>
+			</TouchableOpacity>
 
 			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
@@ -174,23 +195,25 @@ const Home = ({ navigation }) => {
 						{dayjs(date)?.format("D MMMM")}
 					</Text>
 					<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-						<DateTimePicker
-							value={date}
-							onChange={(event, selectedDate) => {
-								// Handle date change here
-								if (event.type === "set") {
-									setShowDatePicker(false);
-									setDate(selectedDate);
-								} else {
-									setShowDatePicker(false);
-								}
-							}}
-							// todo fix type here
-							themeVariant={isDarktheme ? "dark" : "light"}
-							maximumDate={new Date(2024, 10, 20)}
-							minimumDate={new Date(2023, 0, 1)}
-							mode="date"
-						/>
+						{showDatePicker && (
+							<DateTimePicker
+								value={date}
+								onChange={(event, selectedDate) => {
+									// Handle date change here
+									if (event.type === "set") {
+										setShowDatePicker(false);
+										setDate(selectedDate);
+									} else {
+										setShowDatePicker(false);
+									}
+								}}
+								// todo fix type here
+								themeVariant={isDarktheme ? "dark" : "light"}
+								maximumDate={new Date(2024, 10, 20)}
+								minimumDate={new Date(2023, 0, 1)}
+								mode="date"
+							/>
+						)}
 						{/* <AntDesign
 							name="calendar"
 							size={24}
@@ -198,9 +221,9 @@ const Home = ({ navigation }) => {
 						/> */}
 					</TouchableOpacity>
 				</View>
-
-				<View className="">
+				<View>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-blue-400"
 						title="Personal Growth"
@@ -208,6 +231,7 @@ const Home = ({ navigation }) => {
 						emptyTasksMessage={"No Personal Growth tasks for the day!"}
 					/>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-orange-400"
 						title="Medication"
@@ -215,6 +239,7 @@ const Home = ({ navigation }) => {
 						emptyTasksMessage={"No Medication Reminders for the day!"}
 					/>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-pink-400"
 						title="Doctor Visits"
@@ -234,7 +259,15 @@ const TasksCard = ({
 	tasks,
 	emptyTasksMessage,
 	fetchRemindersByDate,
+	deleteReminderById,
 }) => {
+	const rowTranslateAnimatedValues = {};
+	Array(tasks.length)
+		.fill("")
+		.forEach((_, i) => {
+			rowTranslateAnimatedValues[`${i}`] = new Animated.Value(1);
+		});
+
 	const updateTaskStatus = (id: string, isCompleted: boolean) => {
 		db.transaction((tx) => {
 			// todo make sure the date is date.now() format it accodingly
@@ -252,43 +285,176 @@ const TasksCard = ({
 			);
 		}, null);
 	};
+	const animationIsRunning = useRef(false);
+
+	const onSwipeValueChange = (swipeData) => {
+		const { key, value } = swipeData;
+		if (value < -SCREEN_WIDTH / 8 && !animationIsRunning.current) {
+			animationIsRunning.current = true;
+			Animated.timing(rowTranslateAnimatedValues[key], {
+				toValue: 0,
+				duration: 200,
+				useNativeDriver: false,
+			}).start(() => {
+				const itemToDelete = tasks.findIndex((item) => item.key === key);
+				// newData.splice(prevIndex, 1);
+				deleteReminderById(itemToDelete.id);
+				// setListData(newData);
+				animationIsRunning.current = false;
+			});
+		}
+	};
+
+	const renderItem = (data) => {
+		const task = data.item;
+		return (
+			<Animated.View
+				style={[
+					{
+						height: rowTranslateAnimatedValues[data.item.key].interpolate({
+							inputRange: [0, 1],
+							outputRange: [0, 65],
+						}),
+					},
+				]}
+			>
+				<TouchableHighlight
+					onPress={() => console.log("You touched me")}
+					style={styles.rowFront}
+					// underlayColor={"#AAA"}
+				>
+					<View
+						key={task.id}
+						className={`w-full h-full justify-center pl-4 ${bgColor}`}
+					>
+						<Checkbox
+							className="rounded-full w-6 h-6"
+							isChecked={task.isCompleted === 1}
+							onChange={(newVal) => {
+								console.log(newVal);
+								updateTaskStatus(task.id, newVal);
+							}}
+							value={task.task}
+						>
+							<View>
+								<Text
+									className={` text-white text-3xl font-semibold tracking-tight ${
+										task.isCompleted === 1 ? "line-through" : ""
+									}`}
+								>
+									{task.task}
+								</Text>
+								<Text className="text-slate-800">{task.time}</Text>
+							</View>
+						</Checkbox>
+					</View>
+				</TouchableHighlight>
+			</Animated.View>
+		);
+	};
 
 	return (
-		<View className={`${bgColor} p-4 mt-4 rounded-lg`}>
-			<Text className="text-white text-2xl font-semibold tracking-tight">
-				{title}
-			</Text>
-			<View className="divide-y-[0.175px] divide-gray-500">
-				{tasks?.length > 0 ? (
-					tasks.map((task) => (
-						//todo replace key with id
-						<View key={task.id} className="flex-rowgap-3 mt-2">
-							<Checkbox
-								className="rounded-full w-6 h-6"
-								isChecked={task.isCompleted === 1}
-								onChange={(newVal) => updateTaskStatus(task.id, newVal)}
-								value={task.task}
-							>
-								<View>
-									<Text
-										className={` text-white text-3xl font-semibold tracking-tight ${
-											// make this change when value is toggled
-											task.isCompleted === 1 ? "line-through" : ""
-										}`}
-									>
-										{task.task}
-									</Text>
-									<Text className="text-slate-800">{task.time}</Text>
-								</View>
-							</Checkbox>
-						</View>
-					))
-				) : (
-					<Text className="text-white text-xl font-semibold tracking-tight">
-						{emptyTasksMessage}
-					</Text>
-				)}
-			</View>
-		</View>
+		<TasksBody
+			bgColor={bgColor}
+			title={title}
+			tasks={tasks}
+			renderItem={renderItem}
+			renderHiddenItem={renderHiddenItem}
+			onSwipeValueChange={onSwipeValueChange}
+		/>
 	);
 };
+
+const renderHiddenItem = () => (
+	<View style={styles.rowBack}>
+		<View style={[styles.backRightBtn, styles.backRightBtnRight]}>
+			<Text className="text-white">Delete</Text>
+		</View>
+	</View>
+);
+
+const TasksBody = ({
+	bgColor,
+	title,
+	tasks,
+	renderItem,
+	renderHiddenItem,
+	onSwipeValueChange,
+}) => {
+	const tasksRemainingCount = tasks.filter(
+		(item) => item.isCompleted === 0
+	).length;
+	const [hideTasks, setHideTasks] = useState(false);
+
+	return (
+		<>
+			<TouchableOpacity
+				activeOpacity={1}
+				className={`${bgColor} p-4 my-2 rounded-lg justify-between flex-row`}
+				onPress={() => setHideTasks((prev) => !prev)}
+			>
+				<Text className="text-white text-2xl font-semibold tracking-tight">
+					{title}
+				</Text>
+
+				<View className="flex-row items-center">
+					<View className="rounded-full bg-blue-500 w-8 h-8 items-center justify-center">
+						<Text className="text-white text-xl font-semibold tracking-tight">
+							{tasksRemainingCount}
+						</Text>
+					</View>
+					<AntDesign
+						name="down"
+						size={24}
+						color="black"
+						style={{
+							transform: [{ rotate: hideTasks ? "0deg" : "180deg" }],
+						}}
+					/>
+				</View>
+			</TouchableOpacity>
+			{!hideTasks && (
+				<SwipeListView
+					disableRightSwipe
+					data={tasks}
+					renderItem={renderItem}
+					renderHiddenItem={renderHiddenItem}
+					rightOpenValue={-SCREEN_WIDTH}
+					onSwipeValueChange={onSwipeValueChange}
+					useNativeDriver={false}
+					className={`${bgColor} dark:bg-black rounded-xl`}
+				/>
+			)}
+		</>
+	);
+};
+
+const styles = StyleSheet.create({
+	rowFront: {
+		alignItems: "center",
+		borderBottomColor: "black",
+		borderBottomWidth: 1,
+		justifyContent: "center",
+		height: 65,
+	},
+	rowBack: {
+		alignItems: "center",
+		backgroundColor: "red",
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingLeft: 15,
+	},
+	backRightBtn: {
+		alignItems: "center",
+		bottom: 0,
+		justifyContent: "center",
+		position: "absolute",
+		top: 0,
+		width: 75,
+	},
+	backRightBtnRight: {
+		backgroundColor: "red",
+		right: 0,
+	},
+});

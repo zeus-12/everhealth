@@ -1,7 +1,13 @@
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 import { SCREEN_HEIGHT } from "../../lib/constants";
-import { Button, FormControl, Input, WarningOutlineIcon } from "native-base";
+import {
+	Button,
+	FormControl,
+	Input,
+	Radio,
+	WarningOutlineIcon,
+} from "native-base";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUserStore } from "../../hooks/useStore";
@@ -12,6 +18,7 @@ interface FormValues {
 	age: string;
 	height: string;
 	weight: string;
+	gender: string;
 }
 
 const schema = z.object({
@@ -45,10 +52,11 @@ const schema = z.object({
 			(val) => !isNaN(Number(val)) && Number(val) > 30 && Number(val) < 300,
 			{ message: "Invalid height" }
 		),
+	gender: z.enum(["MALE", "FEMALE"]),
 });
 
 const PersonalData = () => {
-	const { setHasOnBoarded, setHeight, setAge, setWeight, setName } =
+	const { setHasOnBoarded, setHeight, setAge, setWeight, setName, setGender } =
 		useUserStore((s) => {
 			return s;
 		});
@@ -60,12 +68,14 @@ const PersonalData = () => {
 	} = useForm<FormValues>({ resolver: zodResolver(schema) });
 
 	const onSubmit = (data) => {
+		console.log(data);
 		if (Object.keys(errors).length === 0) {
 			setHasOnBoarded(true);
 			setHeight(Number(data.height));
 			setAge(Number(data.age));
 			setWeight(Number(data.weight));
 			setName(data.name);
+			setGender(data.gender);
 		}
 	};
 
@@ -75,24 +85,36 @@ const PersonalData = () => {
 			title: "name",
 			text: "What should we call you?",
 			isNumeric: false,
+			type: "FORM",
 		},
 		{
 			label: "Age",
 			title: "age",
 			text: "How old are you?",
 			isNumeric: true,
+			type: "FORM",
 		},
+		{
+			label: "Gender",
+			title: "gender",
+			text: "What do you identify as?",
+			isNumeric: false,
+			type: "RADIO",
+		},
+
 		{
 			label: "Height (in cm)",
 			title: "height",
 			text: "How tall are you?",
 			isNumeric: true,
+			type: "FORM",
 		},
 		{
 			label: "Weight (in kg)",
 			title: "weight",
 			text: "How heavy are you?",
 			isNumeric: true,
+			type: "FORM",
 		},
 	] as const;
 
@@ -118,16 +140,36 @@ const PersonalData = () => {
 								<View className="mb-3">
 									<Text className="font-semibold text-xl">{item.text}</Text>
 									<FormControl isRequired isInvalid={!!errors[item.title]?.message}>
-										<Input
-											size="lg"
-											placeholder={item.label}
-											// mode="outlined"
-											keyboardType={item.isNumeric ? "numeric" : "default"}
-											onBlur={onBlur}
-											contextMenuHidden={true}
-											onChangeText={onChange}
-											value={value}
-										/>
+										{item.type === "FORM" ? (
+											<Input
+												size="lg"
+												placeholder={item.label}
+												// mode="outlined"
+												keyboardType={item.isNumeric ? "numeric" : "default"}
+												onBlur={onBlur}
+												contextMenuHidden={true}
+												onChangeText={onChange}
+												value={value}
+											/>
+										) : (
+											<Radio.Group
+												name="exampleGroup"
+												accessibilityLabel="select prize"
+												onChange={onChange}
+												value={value}
+												// defaultValue={groupValue}
+												// onChange={(value) => {
+												// 	setGroupValue(value || "");
+												// }}
+											>
+												<Radio value="MALE" my="1">
+													Male
+												</Radio>
+												<Radio value="FEMALE" my="1">
+													Female
+												</Radio>
+											</Radio.Group>
+										)}
 										<FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
 											{errors[item.title]?.message}
 										</FormControl.ErrorMessage>
