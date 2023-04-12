@@ -237,13 +237,6 @@ const Home = ({ navigation }) => {
 };
 export default Home;
 
-const rowTranslateAnimatedValues = {};
-Array(10)
-	.fill("")
-	.forEach((_, i) => {
-		rowTranslateAnimatedValues[`${i}`] = new Animated.Value(1);
-	});
-
 const TasksCard = ({
 	bgColor,
 	title,
@@ -251,9 +244,12 @@ const TasksCard = ({
 	emptyTasksMessage,
 	fetchRemindersByDate,
 }) => {
-	// const [listData, setListData] = useState(
-	// 	tasks?.map((ele, i) => ({ key: `${i}`, ...ele }))
-	// );
+	const rowTranslateAnimatedValues = {};
+	Array(tasks.length)
+		.fill("")
+		.forEach((_, i) => {
+			rowTranslateAnimatedValues[`${i}`] = new Animated.Value(1);
+		});
 
 	const updateTaskStatus = (id: string, isCompleted: boolean) => {
 		db.transaction((tx) => {
@@ -340,31 +336,78 @@ const TasksCard = ({
 		);
 	};
 
-	const renderHiddenItem = () => (
-		<View style={styles.rowBack}>
-			<View style={[styles.backRightBtn, styles.backRightBtnRight]}>
-				<Text className="text-white">Delete</Text>
-			</View>
-		</View>
+	return (
+		<TasksBody
+			bgColor={bgColor}
+			title={title}
+			tasks={tasks}
+			renderItem={renderItem}
+			renderHiddenItem={renderHiddenItem}
+			onSwipeValueChange={onSwipeValueChange}
+		/>
 	);
+};
+
+const renderHiddenItem = () => (
+	<View style={styles.rowBack}>
+		<View style={[styles.backRightBtn, styles.backRightBtnRight]}>
+			<Text className="text-white">Delete</Text>
+		</View>
+	</View>
+);
+
+const TasksBody = ({
+	bgColor,
+	title,
+	tasks,
+	renderItem,
+	renderHiddenItem,
+	onSwipeValueChange,
+}) => {
+	const tasksRemainingCount = tasks.filter(
+		(item) => item.isCompleted === 0
+	).length;
+	const [hideTasks, setHideTasks] = useState(false);
 
 	return (
 		<>
-			<View className={`${bgColor} p-4 mt-4 rounded-lg mb-2`}>
+			<TouchableOpacity
+				activeOpacity={1}
+				className={`${bgColor} p-4 mt-4 rounded-lg mb-2 justify-between flex-row`}
+				onPress={() => setHideTasks((prev) => !prev)}
+			>
 				<Text className="text-white text-2xl font-semibold tracking-tight">
 					{title}
 				</Text>
-			</View>
-			<SwipeListView
-				disableRightSwipe
-				data={tasks}
-				renderItem={renderItem}
-				renderHiddenItem={renderHiddenItem}
-				rightOpenValue={-SCREEN_WIDTH}
-				onSwipeValueChange={onSwipeValueChange}
-				useNativeDriver={false}
-				className={`${bgColor} dark:bg-black rounded-xl`}
-			/>
+
+				<View className="flex-row items-center">
+					<View className="rounded-full bg-blue-600 w-8 h-8 text-transparent items-center justify-center">
+						<Text className="text-white text-xl font-semibold tracking-tight">
+							{tasksRemainingCount}
+						</Text>
+					</View>
+					<AntDesign
+						name="down"
+						size={24}
+						color="black"
+						style={{
+							transform: [{ rotate: hideTasks ? "0deg" : "180deg" }],
+						}}
+					/>
+				</View>
+			</TouchableOpacity>
+			{!hideTasks && (
+				<SwipeListView
+					disableRightSwipe
+					data={tasks}
+					renderItem={renderItem}
+					renderHiddenItem={renderHiddenItem}
+					rightOpenValue={-SCREEN_WIDTH}
+					onSwipeValueChange={onSwipeValueChange}
+					useNativeDriver={false}
+					className={`${bgColor} dark:bg-black rounded-xl`}
+				/>
+			)}
 		</>
 	);
 };

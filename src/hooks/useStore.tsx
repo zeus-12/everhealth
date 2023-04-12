@@ -15,6 +15,9 @@ export const useUserStore = create<any>(
 			name: "",
 			setName: (name: string) => set({ name }),
 
+			gender: "",
+			setGender: (gender: Gender) => set({ gender }),
+
 			height: 0,
 			setHeight: (height: number) => set({ height }),
 
@@ -25,12 +28,15 @@ export const useUserStore = create<any>(
 			setAge: (age: number) => set({ age }),
 
 			resetAll: () => {
-				set({ hasOnboarded: false });
-				set({ isAuthenticatedAsGuest: false });
-				set({ name: "" });
-				set({ height: 0 });
-				set({ weight: 0 });
-				set({ age: 0 });
+				set({
+					hasOnboarded: false,
+					isAuthenticatedAsGuest: false,
+					name: "",
+					height: 0,
+					weight: 0,
+					age: 0,
+					gender: "",
+				});
 			},
 		}),
 		{
@@ -61,3 +67,8 @@ export const useAppSettings = create<any>(
 		}
 	)
 );
+
+enum Gender {
+	MALE = "MALE",
+	FEMALE = "FEMALE",
+}

@@ -8,8 +8,17 @@ import { Button, FormControl, Input, Modal, Switch } from "native-base";
 import { deleteDatabase } from "@/lib/db";
 
 const User = ({ navigation }) => {
-	const { resetAll, height, age, weight, name, setAge, setWeight, setHeight } =
-		useUserStore((s) => s);
+	const {
+		resetAll,
+		height,
+		age,
+		weight,
+		name,
+		setAge,
+		setWeight,
+		setHeight,
+		gender,
+	} = useUserStore((s) => s);
 	const { resetAll: resetAllAppSettings } = useAppSettings((s) => s);
 
 	const {
@@ -57,6 +66,12 @@ const User = ({ navigation }) => {
 			onClick: () => {
 				updateEditModalTitleAndShow("Age");
 			},
+		},
+		{
+			type: ElementType.STRING,
+			title: "Gender",
+			value: gender,
+			onClick: () => {},
 		},
 		{
 			type: ElementType.STRING,
