@@ -118,9 +118,8 @@ const User = ({ navigation }) => {
 	return (
 		<Layout pageHeading="User">
 			<ScrollView showsVerticalScrollIndicator={false} className="grow">
-				{/* todo use image from assets instead */}
 				<Image
-					source={"https://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png"}
+					source={require("../assets/user.png")}
 					contentFit="cover"
 					transition={1000}
 					placeholder={blurHash}
@@ -240,7 +239,7 @@ const LogoutWarningModal = ({
 	return (
 		<Modal isOpen={showLogoutWarningModal} onClose={closeLogoutWarningModal}>
 			<Modal.CloseButton />
-			<View className="p-8 bg-white dark:bg-black rounded-xl">
+			<View className="p-4 bg-white dark:bg-black rounded-xl">
 				<Text className="font-semibold dark:text-slate-100 text-xl">
 					Confirm logout?
 				</Text>

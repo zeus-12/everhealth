@@ -11,7 +11,7 @@ import {
 import Layout from "@components/common/Layout";
 import { ReminderType, Reminder } from "@/types/storage";
 import { Checkbox } from "native-base";
-import { db } from "@/lib/db";
+import { db, deleteTable } from "@/lib/db";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import { AntDesign } from "@expo/vector-icons";
@@ -42,10 +42,20 @@ const Home = ({ navigation }) => {
 	useEffect(() => {
 		db.transaction((tx) => {
 			tx.executeSql(
-				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL);"
+				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, time TEXT NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL);",
+				[],
+				(_, result) => {
+					// success callback
+					console.log("Table created successfully");
+					fetchRemindersByDate(tx);
+				},
+				(_, error) => {
+					// error callback
+					console.log(`Error creating table: ${error.message}`);
+					return true; // Rollback the transaction
+				}
 			);
-			fetchRemindersByDate(tx);
-		});
+		}, null);
 	}, [date]);
 
 	const fetchRemindersByDate = (tx) => {
@@ -116,16 +126,14 @@ const Home = ({ navigation }) => {
 		});
 	};
 	// deleteTable("reminders");
-
-	// useEffect(() => {
-	// 	addGroupedReminder({
-	// 		dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
-	// 		task: "medicine",
-	// 		type: ReminderType.PERSONAL_GROWTH,
-	// 		times: ["12:30", "05:30", "20:30"],
-	// 	});
-	// }, []);
-
+	const addGroupMockData = () => {
+		addGroupedReminder({
+			dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
+			task: "medicine",
+			type: ReminderType.PERSONAL_GROWTH,
+			times: ["12:30", "05:30", "20:30"],
+		});
+	};
 	const deleteReminderById = (id: string) => {
 		db.transaction((tx) => {
 			tx.executeSql(
@@ -177,6 +185,9 @@ const Home = ({ navigation }) => {
 			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
+			<TouchableOpacity onPress={() => addGroupMockData()}>
+				<Text>this</Text>
+			</TouchableOpacity>
 
 			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
@@ -184,23 +195,25 @@ const Home = ({ navigation }) => {
 						{dayjs(date)?.format("D MMMM")}
 					</Text>
 					<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-						<DateTimePicker
-							value={date}
-							onChange={(event, selectedDate) => {
-								// Handle date change here
-								if (event.type === "set") {
-									setShowDatePicker(false);
-									setDate(selectedDate);
-								} else {
-									setShowDatePicker(false);
-								}
-							}}
-							// todo fix type here
-							themeVariant={isDarktheme ? "dark" : "light"}
-							maximumDate={new Date(2024, 10, 20)}
-							minimumDate={new Date(2023, 0, 1)}
-							mode="date"
-						/>
+						{showDatePicker && (
+							<DateTimePicker
+								value={date}
+								onChange={(event, selectedDate) => {
+									// Handle date change here
+									if (event.type === "set") {
+										setShowDatePicker(false);
+										setDate(selectedDate);
+									} else {
+										setShowDatePicker(false);
+									}
+								}}
+								// todo fix type here
+								themeVariant={isDarktheme ? "dark" : "light"}
+								maximumDate={new Date(2024, 10, 20)}
+								minimumDate={new Date(2023, 0, 1)}
+								mode="date"
+							/>
+						)}
 						{/* <AntDesign
 							name="calendar"
 							size={24}
@@ -210,6 +223,7 @@ const Home = ({ navigation }) => {
 				</View>
 				<View>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-blue-400"
 						title="Personal Growth"
@@ -217,6 +231,7 @@ const Home = ({ navigation }) => {
 						emptyTasksMessage={"No Personal Growth tasks for the day!"}
 					/>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-orange-400"
 						title="Medication"
@@ -224,6 +239,7 @@ const Home = ({ navigation }) => {
 						emptyTasksMessage={"No Medication Reminders for the day!"}
 					/>
 					<TasksCard
+						deleteReminderById={deleteReminderById}
 						fetchRemindersByDate={fetchRemindersByDate}
 						bgColor="bg-pink-400"
 						title="Doctor Visits"
@@ -243,6 +259,7 @@ const TasksCard = ({
 	tasks,
 	emptyTasksMessage,
 	fetchRemindersByDate,
+	deleteReminderById,
 }) => {
 	const rowTranslateAnimatedValues = {};
 	Array(tasks.length)
@@ -272,16 +289,16 @@ const TasksCard = ({
 
 	const onSwipeValueChange = (swipeData) => {
 		const { key, value } = swipeData;
-		if (value < -SCREEN_WIDTH && !animationIsRunning.current) {
+		if (value < -SCREEN_WIDTH / 8 && !animationIsRunning.current) {
 			animationIsRunning.current = true;
 			Animated.timing(rowTranslateAnimatedValues[key], {
 				toValue: 0,
 				duration: 200,
 				useNativeDriver: false,
 			}).start(() => {
-				const newData = [...tasks];
-				const prevIndex = tasks.findIndex((item) => item.key === key);
-				newData.splice(prevIndex, 1);
+				const itemToDelete = tasks.findIndex((item) => item.key === key);
+				// newData.splice(prevIndex, 1);
+				deleteReminderById(itemToDelete.id);
 				// setListData(newData);
 				animationIsRunning.current = false;
 			});
@@ -296,7 +313,7 @@ const TasksCard = ({
 					{
 						height: rowTranslateAnimatedValues[data.item.key].interpolate({
 							inputRange: [0, 1],
-							outputRange: [0, 60],
+							outputRange: [0, 65],
 						}),
 					},
 				]}
@@ -373,7 +390,7 @@ const TasksBody = ({
 		<>
 			<TouchableOpacity
 				activeOpacity={1}
-				className={`${bgColor} p-4 mt-4 rounded-lg mb-2 justify-between flex-row`}
+				className={`${bgColor} p-4 my-2 rounded-lg justify-between flex-row`}
 				onPress={() => setHideTasks((prev) => !prev)}
 			>
 				<Text className="text-white text-2xl font-semibold tracking-tight">
@@ -381,7 +398,7 @@ const TasksBody = ({
 				</Text>
 
 				<View className="flex-row items-center">
-					<View className="rounded-full bg-blue-600 w-8 h-8 text-transparent items-center justify-center">
+					<View className="rounded-full bg-blue-500 w-8 h-8 items-center justify-center">
 						<Text className="text-white text-xl font-semibold tracking-tight">
 							{tasksRemainingCount}
 						</Text>
@@ -418,7 +435,7 @@ const styles = StyleSheet.create({
 		borderBottomColor: "black",
 		borderBottomWidth: 1,
 		justifyContent: "center",
-		height: 60,
+		height: 65,
 	},
 	rowBack: {
 		alignItems: "center",

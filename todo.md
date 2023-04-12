@@ -1,6 +1,3 @@
-- add tasks ui, add option to go to a diff day
-- add proper error message ui
-
 - leaderboard page - setup firebase for this.
 - notification?
 
