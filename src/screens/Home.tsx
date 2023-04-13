@@ -296,10 +296,8 @@ const TasksCard = ({
 				duration: 200,
 				useNativeDriver: false,
 			}).start(() => {
-				const itemToDelete = tasks.findIndex((item) => item.key === key);
-				// newData.splice(prevIndex, 1);
+				const itemToDelete = tasks.find((item) => item.key === key);
 				deleteReminderById(itemToDelete.id);
-				// setListData(newData);
 				animationIsRunning.current = false;
 			});
 		}
