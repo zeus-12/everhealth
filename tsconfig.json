@@ -16,5 +16,5 @@
 		"src/components/app/**/*",
 		"src/assets",
 		"app"
-, "firebaseConfig.js"	]
+, "src/lib/firebaseConfig.ts"	]
 }
