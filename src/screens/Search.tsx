@@ -155,7 +155,7 @@ const SearchBody = ({ error, loading, results, addReminder }) => {
 						</Text>
 
 						<TouchableOpacity
-							className=" h-full flex-row items-center justify-center bg-blue-100 dark:bg-blue-300 rounded-r-xl rounded-e-xl"
+							className=" h-full flex-row items-center justify-center bg-blue-100 dark:bg-blue-400 rounded-r-xl rounded-e-xl"
 							style={{ width: "12.75%" }}
 							onPress={() => addReminder(item)}
 						>
