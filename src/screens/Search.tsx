@@ -11,20 +11,14 @@ import Layout from "@components/common/Layout";
 import { Input } from "native-base";
 import { useUserStore } from "../hooks/useStore";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { chatbotId, userId } from "../../secrets";
 
 const Search = ({ navigation }) => {
 	const [query, setQuery] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
-	const [results, setResults] = useState([
-		"Here are some natural ways to potentially increase height for a male of age 22, 180cm tall, and weighing 76kg:",
-		"**Get proper nutrition:** Eating a balanced diet with adequate amounts of protein, vitamins, and minerals is essential for healthy growth. Foods high in calcium, such as dairy products, leafy greens, and fortified cereals, can help strengthen bones.",
-		"**Exercise regularly:** Engaging in physical activities like swimming, cycling, and stretching can help improve posture and increase flexibility. Weight-bearing exercises like running and jumping may also stimulate bone growth.",
-		"**Get enough sleep:** Getting enough restful sleep is important for overall health and growth. Aim for 7-9 hours of sleep per night.",
-		"**Avoid smoking and alcohol:** Smoking and excessive alcohol consumption can inhibit growth and cause other health problems. It's important to keep in mind that genetics and other factors may play a significant role in determining height, and there is no guaranteed way to increase it naturally.",
-	]);
+	const [results, setResults] = useState([]);
 
-	// const [results, setResults] = useState([]);
 	const { age, gender, height, weight } = useUserStore((s) => s);
 
 	const queryHandler = async () => {
@@ -33,8 +27,6 @@ const Search = ({ navigation }) => {
 
 		setLoading(true);
 		const url = "https://ora.sh/api/conversation";
-		const chatbotId = "3084782d-dae1-453a-85f0-49161fee40b5";
-		const userId = "a234d5e0-af4b-40da-aff4-1df18a990d8f";
 
 		const payload = {
 			chatbotId: chatbotId,
@@ -124,11 +116,10 @@ const Search = ({ navigation }) => {
 };
 
 const SearchBody = ({ error, loading, results, addReminder }) => {
-	console.log(results);
 	if (error) {
 		return (
 			<Text className="text-lg font-medium text-gray-900 dark:text-slate-100">
-				error
+				Error
 			</Text>
 		);
 	} else if (loading) {
@@ -138,8 +129,6 @@ const SearchBody = ({ error, loading, results, addReminder }) => {
 			</Text>
 		);
 	} else if (results?.length > 0) {
-		console.log(typeof results);
-		console.log("results", results);
 		return (
 			<View className="my-2">
 				{results.map((item, index) => (
