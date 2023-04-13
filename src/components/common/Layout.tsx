@@ -4,6 +4,8 @@ import { useState } from "react";
 import { getScreenHeightWithoutTabs } from "../../lib/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Modal } from "native-base";
+import { useNavigation } from "@react-navigation/native";
+import { ReminderType } from "../../types/storage";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
@@ -19,6 +21,8 @@ const Layout = ({
 }) => {
 	const [isAddTasksButtonActive, setIsAddTasksButtonActive] = useState(false);
 	const [showStreakModal, setShowStreakModal] = useState(false);
+
+	const navigation = useNavigation();
 
 	const handleAddTasksButtonPress = () => {
 		setIsAddTasksButtonActive((prev) => !prev);
@@ -38,7 +42,8 @@ const Layout = ({
 					<View className="flex-row items-center">
 						{showBackButton && (
 							<Ionicons
-								onPress={onBackButtonPress}
+								// onPress={onBackButtonPress}
+								onPress={() => navigation.goBack()}
 								name="arrow-back-outline"
 								size={24}
 								className="text-black dark:text-slate-100"
@@ -83,12 +88,15 @@ const Layout = ({
 							[
 								{
 									icon: "💪",
+									type: "Personal Growth",
 								},
 								{
 									icon: "💊",
+									type: "Medication",
 								},
 								{
 									icon: "🩺",
+									type: "Doctor Visit",
 								},
 							].map((item, i) => (
 								<View
@@ -103,7 +111,12 @@ const Layout = ({
 									}}
 								>
 									<TouchableOpacity
-										onPress={() => console.log("add task of " + item.icon)}
+										onPress={() => {
+											setShowStreakModal(false);
+											navigation.navigate("Add Reminder", {
+												reminderType: item.type,
+											});
+										}}
 										className="w-14 justify-center items-center h-14 rounded-full bg-gray-400"
 									>
 										<Text className="text-3xl">{item.icon}</Text>
@@ -139,7 +152,7 @@ const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
 								subText: "Total Progress",
 							},
 						].map((item) => (
-							<View className="flex-row gap-3 my-3 items-center">
+							<View className="flex-row gap-3 my-3 items-center" key={item.subText}>
 								<Text className="text-5xl font-bold">{item.icon}</Text>
 								<View>
 									<Text className="text-2xl font-bold dark:text-slate-100">
@@ -157,4 +170,5 @@ const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
 		</Modal>
 	);
 };
+
 export default Layout;
