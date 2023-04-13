@@ -125,7 +125,6 @@ const Home = ({ navigation }) => {
 			});
 		});
 	};
-	// deleteTable("reminders");
 	const addGroupMockData = () => {
 		addGroupedReminder({
 			dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
@@ -134,6 +133,7 @@ const Home = ({ navigation }) => {
 			times: ["12:30", "05:30", "20:30"],
 		});
 	};
+
 	const deleteReminderById = (id: string) => {
 		db.transaction((tx) => {
 			tx.executeSql(
@@ -168,7 +168,6 @@ const Home = ({ navigation }) => {
 		}, null);
 	};
 
-	// addIndividualTask({
 	// 	task: "do LASTE",
 	// 	isCompleted: false,
 	// 	type: ReminderType.PERSONAL_GROWTH,
@@ -183,9 +182,6 @@ const Home = ({ navigation }) => {
 			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
-			<TouchableOpacity onPress={() => addGroupMockData()}>
-				<Text>this</Text>
-			</TouchableOpacity>
 
 			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
