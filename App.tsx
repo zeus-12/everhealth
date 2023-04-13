@@ -11,11 +11,10 @@ import User from "@/screens/User";
 import UserData from "@/screens/onboarding/UserData";
 import OnboardingWelcome from "@/screens/onboarding/Welcome";
 
-import { AntDesign, Entypo, Feather, Ionicons } from "@expo/vector-icons";
+import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { useColorScheme } from "nativewind";
-import MedicalData from "./src/screens/MedicalData";
 import Leaderboard from "./src/screens/Leaderboard";
 import NewReminder from "./src/screens/NewReminder";
 
@@ -96,9 +95,7 @@ export default function App() {
 
 	const TabNavigation = () => (
 		<Tab.Navigator
-			// ADD BACKBUTTON
 			screenOptions={({ route }) => ({
-				// remove headertitle
 				headerShown: false,
 
 				tabBarStyle: {
@@ -115,15 +112,6 @@ export default function App() {
 					),
 				}}
 			/>
-			{/* <Tab.Screen
-				name="Medical"
-				component={NewReminder}
-				options={{
-					tabBarIcon: ({ focused, color, size }) => (
-						<AntDesign name="heart" size={size} color={color} />
-					),
-				}}
-			/> */}
 			<Tab.Screen
 				name="Search"
 				component={SearchStack}

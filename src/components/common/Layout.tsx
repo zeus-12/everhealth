@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, View, SafeAreaView } from "react-native";
-import Heading from "./Heading";
+import Heading from "@/components/common/Heading";
 import { useState } from "react";
-import { getScreenHeightWithoutTabs } from "../../lib/constants";
+import { getScreenHeightWithoutTabs } from "@/lib/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Modal } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import { ReminderType } from "../../types/storage";
+import { ReminderType } from "@/types/storage";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
@@ -42,7 +42,6 @@ const Layout = ({
 					<View className="flex-row items-center">
 						{showBackButton && (
 							<Ionicons
-								// onPress={onBackButtonPress}
 								onPress={() => navigation.goBack()}
 								name="arrow-back-outline"
 								size={24}
@@ -88,20 +87,20 @@ const Layout = ({
 							[
 								{
 									icon: "💪",
-									type: "Personal Growth",
+									type: ReminderType.PERSONAL_GROWTH,
 								},
 								{
 									icon: "💊",
-									type: "Medication",
+									type: ReminderType.MEDICATION,
 								},
 								{
 									icon: "🩺",
-									type: "Doctor Visit",
+									type: ReminderType.DOCTOR_VISIT,
 								},
 							].map((item, i) => (
 								<View
 									key={i}
-									className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400"
+									className="w-14 justify-center items-center h-14 rounded-full absolute bg-gray-400 dark:bg-gray-800"
 									style={{
 										bottom:
 											15 +
@@ -112,12 +111,12 @@ const Layout = ({
 								>
 									<TouchableOpacity
 										onPress={() => {
-											setShowStreakModal(false);
+											setIsAddTasksButtonActive(false);
 											navigation.navigate("Add Reminder", {
 												reminderType: item.type,
 											});
 										}}
-										className="w-14 justify-center items-center h-14 rounded-full bg-gray-400"
+										className="w-14 justify-center items-center h-14 rounded-full"
 									>
 										<Text className="text-3xl">{item.icon}</Text>
 									</TouchableOpacity>
@@ -139,7 +138,7 @@ const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
 		<Modal size="sm" isOpen={showStreakModal} onClose={handleCloseStreakModal}>
 			<Modal.Content className="dark:bg-slate-950">
 				<Modal.Body>
-					<View className="p-4">
+					<View className="px-4 py-2r">
 						{[
 							{
 								icon: "🔥",

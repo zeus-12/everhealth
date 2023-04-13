@@ -12,15 +12,12 @@ const OnboardingWelcome = ({ navigation }) => {
 				Welcome! 🙏
 			</Text>
 			<View>
-				{["Sign in with Google", "Continue as Guest"].map((text) => (
-					<SignInContainer
-						onPress={() => {
-							navigation.navigate("user-data");
-						}}
-						key={text}
-						text={text}
-					/>
-				))}
+				<SignInContainer
+					onPress={() => {
+						navigation.navigate("user-data");
+					}}
+					text={"Get started"}
+				/>
 			</View>
 		</SafeAreaView>
 	);
@@ -30,9 +27,9 @@ const SignInContainer = ({ text, onPress }) => {
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			className="bg-blue-300 px-4 py-2 mt-2 rounded-md"
+			className="bg-blue-400 px-4 py-2 mt-2 rounded-md"
 		>
-			<Text className="text-xl font-medium">{text}</Text>
+			<Text className="text-2xl font-medium text-white">{text}</Text>
 		</TouchableOpacity>
 	);
 };

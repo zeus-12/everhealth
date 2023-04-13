@@ -43,7 +43,6 @@ const Leaderboard = ({ navigation }) => {
 	return (
 		<Layout
 			pageHeading="Leaderboard"
-			showAddTasksButton={false}
 			showBackButton={true}
 			onBackButtonPress={() => navigation.goBack()}
 		>

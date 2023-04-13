@@ -178,8 +178,6 @@ const Home = ({ navigation }) => {
 	// 	group_id: "LAST",
 	// });
 
-	const [showDatePicker, setShowDatePicker] = useState(false);
-
 	return (
 		<Layout pageHeading="Home">
 			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
@@ -194,32 +192,20 @@ const Home = ({ navigation }) => {
 					<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
 						{dayjs(date)?.format("D MMMM")}
 					</Text>
-					<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-						{showDatePicker && (
-							<DateTimePicker
-								value={date}
-								onChange={(event, selectedDate) => {
-									// Handle date change here
-									if (event.type === "set") {
-										setShowDatePicker(false);
-										setDate(selectedDate);
-									} else {
-										setShowDatePicker(false);
-									}
-								}}
-								// todo fix type here
-								themeVariant={isDarktheme ? "dark" : "light"}
-								maximumDate={new Date(2024, 10, 20)}
-								minimumDate={new Date(2023, 0, 1)}
-								mode="date"
-							/>
-						)}
-						{/* <AntDesign
-							name="calendar"
-							size={24}
-							className="text-black dark:text-slate-100"
-						/> */}
-					</TouchableOpacity>
+					<DateTimePicker
+						value={date}
+						onChange={(event, selectedDate) => {
+							// Handle date change here
+							if (event.type === "set") {
+								setDate(selectedDate);
+							}
+						}}
+						// todo fix type here
+						themeVariant={isDarktheme ? "dark" : "light"}
+						maximumDate={new Date(2024, 10, 20)}
+						minimumDate={new Date(2023, 0, 1)}
+						mode="date"
+					/>
 				</View>
 				<View>
 					<TasksCard
