@@ -17,6 +17,7 @@ import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { useColorScheme } from "nativewind";
 import MedicalData from "./src/screens/MedicalData";
 import Leaderboard from "./src/screens/Leaderboard";
+import NewReminder from "./src/screens/NewReminder";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -34,6 +35,65 @@ export default function App() {
 		setColorScheme(isDarktheme ? "dark" : "light");
 	}, [isDarktheme]);
 
+	const HomeStack = () => {
+		return (
+			<Stack.Navigator>
+				<Stack.Screen
+					name="HomeStack"
+					component={Home}
+					options={{
+						headerShown: false,
+					}}
+				/>
+
+				<Stack.Screen
+					name="Add Reminder"
+					component={NewReminder}
+					options={{ headerShown: false }}
+				/>
+			</Stack.Navigator>
+		);
+	};
+	const SearchStack = () => {
+		return (
+			<Stack.Navigator>
+				<Stack.Screen
+					name="SearchStack"
+					component={Search}
+					options={{
+						headerShown: false,
+					}}
+				/>
+
+				<Stack.Screen
+					name="Add Reminder"
+					component={NewReminder}
+					options={{ headerShown: false }}
+				/>
+			</Stack.Navigator>
+		);
+	};
+
+	const FeedStack = () => {
+		return (
+			<Stack.Navigator>
+				<Stack.Screen
+					name="FeedStack"
+					component={Feed}
+					options={{
+						headerShown: false,
+					}}
+				/>
+
+				<Stack.Screen
+					name="Add Reminder"
+					component={NewReminder}
+					options={{ headerShown: false }}
+				/>
+			</Stack.Navigator>
+		);
+	};
+
 	const TabNavigation = () => (
 		<Tab.Navigator
 			// ADD BACKBUTTON
@@ -48,25 +108,25 @@ export default function App() {
 		>
 			<Tab.Screen
 				name="Home"
-				component={Home}
+				component={HomeStack}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
 						<Entypo name="home" size={size} color={color} />
 					),
 				}}
 			/>
-			<Tab.Screen
+			{/* <Tab.Screen
 				name="Medical"
-				component={MedicalData}
+				component={NewReminder}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
 						<AntDesign name="heart" size={size} color={color} />
 					),
 				}}
-			/>
+			/> */}
 			<Tab.Screen
 				name="Search"
-				component={Search}
+				component={SearchStack}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
 						<Feather name="search" size={size} color={color} />
@@ -75,7 +135,7 @@ export default function App() {
 			/>
 			<Tab.Screen
 				name="Feed"
-				component={Feed}
+				component={FeedStack}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
 						<Ionicons name="newspaper" size={size} color={color} />
@@ -107,6 +167,12 @@ export default function App() {
 				<Stack.Screen
 					name="Leaderboard"
 					component={Leaderboard}
+					options={{ headerShown: false }}
+				/>
+
+				<Stack.Screen
+					name="Add Reminder"
+					component={NewReminder}
 					options={{ headerShown: false }}
 				/>
 			</Stack.Navigator>

@@ -12,22 +12,19 @@ import { Input } from "native-base";
 import { useUserStore } from "../hooks/useStore";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
-const Search = () => {
+const Search = ({ navigation }) => {
 	const [query, setQuery] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
-	// const [results, setResults] = useState([
-	// 	"Here are some natural ways for a male aged 22, 180cm tall, weighing 76kg to lose weight:",
-	// 	"Incorporate more fruits and vegetables into your diet. They are low in calories and high in nutrients.",
-	// 	"Drink plenty of water to stay hydrated and help flush out toxins.",
-	// 	"Reduce your intake of processed and sugary foods, as they can contribute to weight gain.",
-	// 	"Increase your physical activity by going for a walk or jog, joining a sports team, or doing a workout at home.",
-	// 	"Try intermittent fasting, where you eat during a certain window of time each day and fast for the rest of the time.",
-	// 	"Add spices like cayenne pepper or cumin to your meals, as they can boost your metabolism and help you burn more calories.",
-	// 	"Get enough sleep each night, as lack of sleep can contribute to weight gain. Remember to always consult with a healthcare professional before starting any new diet or exercise regimen.",
-	// ]);
+	const [results, setResults] = useState([
+		"Here are some natural ways to potentially increase height for a male of age 22, 180cm tall, and weighing 76kg:",
+		"**Get proper nutrition:** Eating a balanced diet with adequate amounts of protein, vitamins, and minerals is essential for healthy growth. Foods high in calcium, such as dairy products, leafy greens, and fortified cereals, can help strengthen bones.",
+		"**Exercise regularly:** Engaging in physical activities like swimming, cycling, and stretching can help improve posture and increase flexibility. Weight-bearing exercises like running and jumping may also stimulate bone growth.",
+		"**Get enough sleep:** Getting enough restful sleep is important for overall health and growth. Aim for 7-9 hours of sleep per night.",
+		"**Avoid smoking and alcohol:** Smoking and excessive alcohol consumption can inhibit growth and cause other health problems. It's important to keep in mind that genetics and other factors may play a significant role in determining height, and there is no guaranteed way to increase it naturally.",
+	]);
 
-	const [results, setResults] = useState([]);
+	// const [results, setResults] = useState([]);
 	const { age, gender, height, weight } = useUserStore((s) => s);
 
 	const queryHandler = async () => {
@@ -83,6 +80,13 @@ const Search = () => {
 		}
 	};
 
+	const addReminder = (task: string) => {
+		navigation.navigate("Add Reminder", {
+			task,
+			reminderType: "Personal Growth",
+		});
+	};
+
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 			<Layout pageHeading="Search">
@@ -107,14 +111,19 @@ const Search = () => {
 				</View>
 
 				<ScrollView showsVerticalScrollIndicator={false} className="mt-2 mb-16">
-					<SearchBody error={error} loading={loading} results={results} />
+					<SearchBody
+						error={error}
+						loading={loading}
+						results={results}
+						addReminder={addReminder}
+					/>
 				</ScrollView>
 			</Layout>
 		</TouchableWithoutFeedback>
 	);
 };
 
-const SearchBody = ({ error, loading, results }) => {
+const SearchBody = ({ error, loading, results, addReminder }) => {
 	console.log(results);
 	if (error) {
 		return (
@@ -139,15 +148,16 @@ const SearchBody = ({ error, loading, results }) => {
 						className="flex-row my-2 w-full items-center border-[0.2px] border-gray-400 dark:border-gray-500 rounded-xl"
 					>
 						<Text
-							className={`break-words mr-2 p-2 text-lg font-medium text-black dark:text-slate-200}`}
+							className={`break-words mr-2 p-2 text-lg font-medium text-black dark:text-slate-200`}
 							style={{ width: "85%" }}
 						>
 							{item}
 						</Text>
 
 						<TouchableOpacity
-							className=" h-full flex-row items-center justify-center bg-blue-100 rounded-r-xl rounded-e-xl"
+							className=" h-full flex-row items-center justify-center bg-blue-100 dark:bg-blue-300 rounded-r-xl rounded-e-xl"
 							style={{ width: "12.75%" }}
+							onPress={() => addReminder(item)}
 						>
 							<MaterialIcons
 								name="add-task"
