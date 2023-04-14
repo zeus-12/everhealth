@@ -208,19 +208,23 @@ const EditModal = ({
 	};
 
 	return (
-		<Modal isOpen={showEditModal} onClose={resetInputAndClose}>
-			<Modal.Content>
-				<Modal.Header className="flex flex-row">Edit {title}</Modal.Header>
+		<Modal isOpen={showEditModal} onClose={resetInputAndClose} >
+			<Modal.Content className=" bg-white dark:bg-black rounded-xl">
+				<Modal.Header className="flex-row  bg-white  dark:bg-black b-none">
+					<Text className=" dark:text-slate-100 text-xl">Edit {title}</Text>
+				</Modal.Header>
 				<Modal.Body>
 					<FormControl>
 						<Input
 							placeholder={`Enter new ${title}`}
 							value={newValue}
 							onChangeText={(value) => setNewValue(value)}
+							className="dark:text-slate-100"
+							
 						/>
 					</FormControl>
 				</Modal.Body>
-				<Modal.Footer>
+				<Modal.Footer className="bg-white dark:bg-black">
 					<Button.Group variant="ghost" space={2}>
 						<Button onPress={resetInputAndClose}>Cancel</Button>
 						<Button onPress={handleSave}>Save</Button>
