@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { ReminderType } from "@/types/storage";
 import { db } from "@/lib/db";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import { useAppSettings } from "@/hooks/useStore";
 import { filterRemindersByType } from "@/lib/utils";
 import TasksCard from "../components/reminders/TasksCard";
+import DatePicker from "@/components/common/DatePicker";
 
 const Home = () => {
 	const [date, setDate] = useState(new Date());
@@ -84,18 +84,7 @@ const Home = () => {
 					{/* <Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
 						{dayjs(date)?.format("D MMMM")}
 					</Text> */}
-					<DateTimePicker
-						value={date}
-						onChange={(event, selectedDate) => {
-							if (event.type === "set") {
-								setDate(selectedDate);
-							}
-						}}
-						themeVariant={isDarktheme ? "dark" : "light"}
-						maximumDate={new Date(2024, 10, 20)}
-						minimumDate={new Date(2023, 0, 1)}
-						mode="date"
-					/>
+					<DatePicker date={date} setDate={setDate} isDarktheme={isDarktheme} />
 				</View>
 				<View>
 					{[

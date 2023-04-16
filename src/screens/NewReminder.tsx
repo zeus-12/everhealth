@@ -6,7 +6,7 @@ import { TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { z } from "zod";
 import { Text } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "@components/common/DatePicker";
 import dayjs from "dayjs";
 import { useAppSettings } from "@/hooks/useStore";
 import { EvilIcons } from "@expo/vector-icons";
@@ -201,19 +201,10 @@ const NewReminder = ({ navigation, route }) => {
 						<Text className="text-black dark:text-slate-100 text-xl font-semibold">
 							Start Date
 						</Text>
-						<DateTimePicker
-							value={startDate}
-							themeVariant={isDarktheme ? "dark" : "light"}
-							onChange={(event, selectedDate) => {
-								// Handle date change here
-								if (event.type === "set") {
-									setStartDate(selectedDate);
-								}
-							}}
-							// todo fix type here
-							maximumDate={new Date(2024, 10, 20)}
-							minimumDate={new Date(2023, 0, 1)}
-							mode="date"
+						<DatePicker
+							date={startDate}
+							setDate={setStartDate}
+							isDarktheme={isDarktheme}
 						/>
 					</View>
 
@@ -221,17 +212,11 @@ const NewReminder = ({ navigation, route }) => {
 						<Text className="text-black dark:text-slate-100 text-xl font-semibold">
 							End Date
 						</Text>
-						<DateTimePicker
-							value={endDate}
-							onChange={(event, selectedDate) => {
-								if (event.type === "set") {
-									setEndDate(selectedDate);
-								}
-							}}
-							themeVariant={isDarktheme ? "dark" : "light"}
-							maximumDate={new Date(2024, 10, 20)}
-							minimumDate={new Date(2023, 0, 1)}
-							mode="date"
+
+						<DatePicker
+							date={endDate}
+							setDate={setEndDate}
+							isDarktheme={isDarktheme}
 						/>
 					</View>
 				</View>

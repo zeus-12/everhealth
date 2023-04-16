@@ -13,8 +13,15 @@ import { TextArea } from "native-base";
 import { useUserStore } from "../hooks/useStore";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { chatbotId, userId } from "../../secrets";
-import { ReminderType } from "../types/storage";
-import { SCREEN_WIDTH, blurHash } from "../lib/constants";
+import { ReminderType } from "@/types/storage";
+import { SCREEN_WIDTH, blurHash } from "@/lib/constants";
+
+const dog0 = require("../assets/gifs/0.gif");
+const dog1 = require("../assets/gifs/1.gif");
+const dog2 = require("../assets/gifs/2.gif");
+const dog3 = require("../assets/gifs/3.gif");
+const dog4 = require("../assets/gifs/4.gif");
+const dog5 = require("../assets/gifs/5.gif");
 
 const Search = ({ navigation }) => {
 	const [query, setQuery] = useState("");
@@ -126,17 +133,21 @@ const SearchBody = ({ error, loading, results, addReminder }) => {
 			</Text>
 		);
 	} else if (loading) {
+		const gifs = [dog0, dog1, dog2, dog3, dog4, dog5];
+		const random = Math.floor(Math.random() * gifs.length);
+
 		return (
 			<>
 				<Image
-					source={require(`../assets/dog.gif`)}
+					// source={require(`../assets/dog.gif`)}
+					source={gifs[random]}
 					contentFit="cover"
 					transition={1000}
 					placeholder={blurHash}
 					className="mx-auto rounded-lg"
 					style={{ width: SCREEN_WIDTH - 30, height: SCREEN_WIDTH - 30 }}
 				/>
-				<Text className="text-lg font-medium text-gray-900 dark:text-slate-100">
+				<Text className="text-center text-lg font-medium text-gray-900 dark:text-slate-100">
 					Enjoy the GIF while you wait :)
 				</Text>
 			</>

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, SafeAreaView } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Heading from "@/components/common/Heading";
 import { useState } from "react";
 import { getScreenHeightWithoutTabs } from "@/lib/constants";
@@ -7,6 +7,7 @@ import { Modal } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { ReminderType } from "@/types/storage";
 import { useAppSettings } from "@/hooks/useStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
