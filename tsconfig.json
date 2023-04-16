@@ -15,6 +15,7 @@
 		"App.tsx",
 		"src/components/app/**/*",
 		"src/assets",
-		"app"
-, "src/lib/firebaseConfig.ts"	]
+		"app",
+		"src/lib/firebaseConfig.ts"
+	]
 }

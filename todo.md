@@ -1,6 +1,3 @@
-- leaderboard page - setup firebase for this.
 - notification?
-
-- puppies/cat gifs
-
+- leaderboard page - setup firebase for this.
 - write function to get streak, and level
