@@ -112,6 +112,7 @@ const Layout = ({
 									<TouchableOpacity
 										onPress={() => {
 											setIsAddTasksButtonActive(false);
+											// @ts-ignore
 											navigation.navigate("Add Reminder", {
 												reminderType: item.type,
 											});
@@ -142,12 +143,12 @@ const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
 						{[
 							{
 								icon: "🔥",
-								dayCount: 5,
+								dayCount: 10,
 								subText: "Current streak",
 							},
 							{
 								icon: "🏆",
-								dayCount: 10,
+								dayCount: 12,
 								subText: "Total Progress",
 							},
 						].map((item) => (

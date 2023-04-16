@@ -209,24 +209,29 @@ const EditModal = ({
 
 	return (
 		<Modal isOpen={showEditModal} onClose={resetInputAndClose}>
-			<Modal.Content>
-				<Modal.Header className="flex flex-row">Edit {title}</Modal.Header>
-				<Modal.Body>
-					<FormControl>
-						<Input
-							placeholder={`Enter new ${title}`}
-							value={newValue}
-							onChangeText={(value) => setNewValue(value)}
-						/>
-					</FormControl>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button.Group variant="ghost" space={2}>
-						<Button onPress={resetInputAndClose}>Cancel</Button>
-						<Button onPress={handleSave}>Save</Button>
-					</Button.Group>
-				</Modal.Footer>
-			</Modal.Content>
+			<Modal.CloseButton />
+			<View className="p-4 bg-white dark:bg-black rounded-xl w-80">
+				<Text className="font-semibold dark:text-slate-100 text-xl mb-4">
+					Edit {title}
+				</Text>
+				<FormControl>
+					<Input
+						className="bg-gray-200 dark:text-slate-200 dark:bg-slate-700"
+						focusOutlineColor={"amber.700"}
+						placeholder={`Enter new ${title}`}
+						value={newValue}
+						onChangeText={(value) => setNewValue(value)}
+					/>
+				</FormControl>
+				<Button className="bg-white mt-2 dark:bg-black" onPress={handleSave}>
+					<Text className="text-lg text-red-600  font-semibold">Update</Text>
+				</Button>
+				<Button className="bg-white dark:bg-black " onPress={resetInputAndClose}>
+					<Text className="text-lg text-black dark:text-slate-100 font-semibold">
+						Cancel
+					</Text>
+				</Button>
+			</View>
 		</Modal>
 	);
 };

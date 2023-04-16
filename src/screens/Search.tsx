@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import Layout from "@components/common/Layout";
-import { Input } from "native-base";
+import { Input, TextArea } from "native-base";
 import { useUserStore } from "../hooks/useStore";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { chatbotId, userId } from "../../secrets";
@@ -84,11 +84,19 @@ const Search = ({ navigation }) => {
 			<Layout pageHeading="Search">
 				<View className="flex-row items-center gap-4">
 					<View className="flex-1">
-						<Input
+						{/* <Input
 							variant="filled"
 							size="lg"
 							className="rounded-md bg-gray-200"
 							placeholder="Email"
+							value={query}
+							onChangeText={(text) => setQuery(text)}
+						/> */}
+
+						<TextArea
+							className="rounded-md bg-gray-200 dark:text-slate-200 dark:bg-slate-700"
+							placeholder="Email"
+							h={"16"}
 							value={query}
 							onChangeText={(text) => setQuery(text)}
 						/>

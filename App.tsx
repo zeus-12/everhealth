@@ -4,6 +4,9 @@ import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); //Ignore all log notifications
+
 import Home from "@/screens/Home";
 import Search from "@/screens/Search";
 import Feed from "@/screens/Feed";
@@ -106,6 +109,15 @@ export default function App() {
 			<Tab.Screen
 				name="Home"
 				component={HomeStack}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Entypo name="home" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Homes"
+				component={NewReminder}
 				options={{
 					tabBarIcon: ({ focused, color, size }) => (
 						<Entypo name="home" size={size} color={color} />

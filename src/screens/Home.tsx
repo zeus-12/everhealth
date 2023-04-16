@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Layout from "@components/common/Layout";
 import { ReminderType, Reminder } from "@/types/storage";
-import { Checkbox } from "native-base";
+import { Button, Checkbox } from "native-base";
 import { db, deleteTable } from "@/lib/db";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
@@ -24,7 +24,7 @@ const Home = ({ navigation }) => {
 	// this state should be controlled to the date picker
 	const [date, setDate] = useState(new Date());
 	const isDarktheme = useAppSettings((s) => s.isDarktheme);
-
+	deleteTable("reminders");
 	const [reminders, setReminders] = useState([]);
 
 	const filterTasksByType = (type: ReminderType) => {
@@ -57,25 +57,6 @@ const Home = ({ navigation }) => {
 			);
 		}, null);
 	}, [date]);
-
-	const fetchRemindersByDate = (tx) => {
-		tx.executeSql(
-			"SELECT * FROM reminders WHERE date = ? ORDER BY time ASC",
-			[dayjs(date).format("YYYY-MM-DD")],
-			(_, { rows }) => {
-				console.log(
-					`fetched tasks for the date ${dayjs(date).format("YYYY-MM-DD")}`
-				);
-				// Sort by time
-				const sortedRows = rows._array.sort((a, b) => a.time.localeCompare(b.time));
-				setReminders(sortedRows);
-			},
-			(tx, error) => {
-				console.log(`Error fetching reminders: ${error.message}`);
-				return true; // Rollback the transaction
-			}
-		);
-	};
 
 	const addIndividualTask = (taskPayload) => {
 		const { task, isCompleted, type, date, time, id, group_id } = taskPayload;
@@ -125,13 +106,24 @@ const Home = ({ navigation }) => {
 			});
 		});
 	};
-	const addGroupMockData = () => {
-		addGroupedReminder({
-			dates: ["2023-04-11", "2023-04-12", "2023-04-13"],
-			task: "medicine",
-			type: ReminderType.PERSONAL_GROWTH,
-			times: ["12:30", "05:30", "20:30"],
-		});
+
+	const fetchRemindersByDate = (tx) => {
+		tx.executeSql(
+			"SELECT * FROM reminders WHERE date = ? ORDER BY time ASC",
+			[dayjs(date).format("YYYY-MM-DD")],
+			(_, { rows }) => {
+				console.log(
+					`fetched tasks for the date ${dayjs(date).format("YYYY-MM-DD")}`
+				);
+				// Sort by time
+				const sortedRows = rows._array.sort((a, b) => a.time.localeCompare(b.time));
+				setReminders(sortedRows);
+			},
+			(tx, error) => {
+				console.log(`Error fetching reminders: ${error.message}`);
+				return true; // Rollback the transaction
+			}
+		);
 	};
 
 	const deleteReminderById = (id: string) => {
@@ -182,12 +174,13 @@ const Home = ({ navigation }) => {
 			<Text className="text-gray-700 dark:text-gray-400 text-xl font-medium tracking-tight">
 				Hows your day been? 💪
 			</Text>
+			{/* <Button onPress={() => addGroupMockData()}>Add group mock data</Button> */}
 
 			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
-					<Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
+					{/* <Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
 						{dayjs(date)?.format("D MMMM")}
-					</Text>
+					</Text> */}
 					<DateTimePicker
 						value={date}
 						onChange={(event, selectedDate) => {
