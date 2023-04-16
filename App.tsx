@@ -4,6 +4,9 @@ import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); //Ignore all log notifications
+
 import Home from "@/screens/Home";
 import Search from "@/screens/Search";
 import Feed from "@/screens/Feed";
@@ -17,6 +20,7 @@ import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { useColorScheme } from "nativewind";
 import Leaderboard from "./src/screens/Leaderboard";
 import NewReminder from "./src/screens/NewReminder";
+import { db } from "@/lib/db";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -26,9 +30,52 @@ export default function App() {
 	const [loaded, setLoaded] = useState<boolean>(true);
 
 	const hasOnboarded = useUserStore((s) => s.hasOnboarded);
-	const isDarktheme = useAppSettings((s) => s.isDarktheme);
+	const { isDarktheme, streak, setStreak } = useAppSettings((s) => s);
 
 	const { setColorScheme } = useColorScheme();
+
+	useEffect(() => {
+		const calculateStreak = () => {
+			return new Promise((resolve, reject) => {
+				db.transaction((tx) => {
+					tx.executeSql(
+						"SELECT * FROM reminders WHERE isCompleted = 0",
+						[],
+						(_, result) => {
+							const currentDate = new Date();
+							let streak = 0;
+							let lastDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000); // yesterday's date
+
+							for (let i = 0; i < result.rows.length; i++) {
+								const row = result.rows.item(i);
+								const date = new Date(row.date);
+
+								if (date.getTime() === lastDate.getTime()) {
+									streak++;
+								} else if (date.getTime() < lastDate.getTime()) {
+									break;
+								} else {
+									// reset streak
+									streak = 0;
+								}
+
+								lastDate = date;
+							}
+
+							resolve(streak);
+						},
+						(_, error) => {
+							reject(error);
+						}
+					);
+				}, null);
+			});
+		};
+
+		calculateStreak().then((streak) => {
+			setStreak(streak);
+		});
+	}, []);
 
 	useEffect(() => {
 		setColorScheme(isDarktheme ? "dark" : "light");

@@ -56,9 +56,13 @@ export const useAppSettings = create<any>(
 			setAllowNotifications: (allowNotifications: boolean) =>
 				set({ allowNotifications }),
 
+			streak: 0,
+			setStreak: (streak: number) => set({ streak }),
+
 			resetAll: () => {
 				set({ isDarktheme: false });
 				set({ allowNotifications: false });
+				set({ streak: 0 });
 			},
 		}),
 		{
