@@ -26,6 +26,11 @@ export const deleteDatabase = () => {
 
 export const deleteTable = (tableName: string) => {
 	db.transaction((tx) => {
-		tx.executeSql(`DROP TABLE IF EXISTS ${tableName}`);
+		tx.executeSql(
+			`DROP TABLE IF EXISTS ${tableName}`,
+			[],
+			(_, result) => console.log(`Table ${tableName} deleted successfully`),
+			(_, error) => console.log(`Error deleting table ${tableName}:`, error)
+		);
 	});
 };

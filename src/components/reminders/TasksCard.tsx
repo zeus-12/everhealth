@@ -17,7 +17,6 @@ const TasksCard = ({
 	bgColor,
 	title,
 	tasks,
-	emptyTasksMessage,
 	fetchRemindersByDate,
 	deleteReminderById,
 	textBgColor,

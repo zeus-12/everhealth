@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUserStore } from "../../hooks/useStore";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { db } from "../../lib/db";
 
 interface FormValues {
 	name: string;
@@ -68,7 +69,6 @@ const PersonalData = () => {
 	} = useForm<FormValues>({ resolver: zodResolver(schema) });
 
 	const onSubmit = (data) => {
-		console.log(data);
 		if (Object.keys(errors).length === 0) {
 			setHasOnBoarded(true);
 			setHeight(Number(data.height));
@@ -77,6 +77,20 @@ const PersonalData = () => {
 			setName(data.name);
 			setGender(data.gender);
 		}
+
+		db.transaction((tx) => {
+			tx.executeSql(
+				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, time TEXT NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL);",
+				[],
+				(_, result) => {
+					// success callback
+				},
+				(_, error) => {
+					// error callback
+					return true; // Rollback the transaction
+				}
+			);
+		}, null);
 	};
 
 	const formEntries = [

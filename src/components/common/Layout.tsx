@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Modal } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { ReminderType } from "@/types/storage";
+import { useAppSettings } from "@/hooks/useStore";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
@@ -21,6 +22,8 @@ const Layout = ({
 }) => {
 	const [isAddTasksButtonActive, setIsAddTasksButtonActive] = useState(false);
 	const [showStreakModal, setShowStreakModal] = useState(false);
+
+	const streak = useAppSettings((s) => s.streak);
 
 	const navigation = useNavigation();
 
@@ -54,7 +57,7 @@ const Layout = ({
 						onPress={() => setShowStreakModal(true)}
 						className="bg-gray-300 dark:bg-gray-800 p-1 rounded-full"
 					>
-						<Text className="dark:text-slate-100 text-lg font-bold">🔥 10</Text>
+						<Text className="dark:text-slate-100 text-lg font-bold">🔥 {streak}</Text>
 					</TouchableOpacity>
 				</View>
 				<View className="mt-2 grow">{children}</View>
@@ -127,6 +130,7 @@ const Layout = ({
 				)}
 			</SafeAreaView>
 			<StreakCardModal
+				streak={streak}
 				showStreakModal={showStreakModal}
 				handleCloseStreakModal={handleCloseStreakModal}
 			/>
@@ -134,7 +138,11 @@ const Layout = ({
 	);
 };
 
-const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
+const StreakCardModal = ({
+	showStreakModal,
+	handleCloseStreakModal,
+	streak,
+}) => {
 	return (
 		<Modal size="sm" isOpen={showStreakModal} onClose={handleCloseStreakModal}>
 			<Modal.Content className="dark:bg-slate-950">
@@ -143,12 +151,12 @@ const StreakCardModal = ({ showStreakModal, handleCloseStreakModal }) => {
 						{[
 							{
 								icon: "🔥",
-								dayCount: 10,
+								dayCount: streak,
 								subText: "Current streak",
 							},
 							{
 								icon: "🏆",
-								dayCount: 12,
+								dayCount: 1,
 								subText: "Total Progress",
 							},
 						].map((item) => (

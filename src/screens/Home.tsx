@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { ReminderType } from "@/types/storage";
@@ -16,20 +16,7 @@ const Home = () => {
 
 	useEffect(() => {
 		db.transaction((tx) => {
-			tx.executeSql(
-				"CREATE TABLE IF NOT EXISTS reminders (id TEXT PRIMARY KEY NOT NULL, group_id TEXT NOT NULL, date TEXT NOT NULL, isCompleted BOOLEAN NOT NULL, time TEXT NOT NULL, task TEXT NOT NULL, type TEXT NOT NULL);",
-				[],
-				(_, result) => {
-					// success callback
-					console.log("Table created successfully");
-					fetchRemindersByDate(tx);
-				},
-				(_, error) => {
-					// error callback
-					console.log(`Error creating table: ${error.message}`);
-					return true; // Rollback the transaction
-				}
-			);
+			fetchRemindersByDate(tx);
 		}, null);
 	}, [date]);
 
@@ -111,33 +98,36 @@ const Home = () => {
 					/>
 				</View>
 				<View>
-					<TasksCard
-						deleteReminderById={deleteReminderById}
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-blue-400"
-						textBgColor="bg-blue-500"
-						title="Personal Growth"
-						tasks={filterRemindersByType(reminders, ReminderType.PERSONAL_GROWTH)}
-						emptyTasksMessage={"No Personal Growth tasks for the day!"}
-					/>
-					<TasksCard
-						deleteReminderById={deleteReminderById}
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-orange-400"
-						textBgColor="bg-orange-500"
-						title="Medication"
-						tasks={filterRemindersByType(reminders, ReminderType.MEDICATION)}
-						emptyTasksMessage={"No Medication Reminders for the day!"}
-					/>
-					<TasksCard
-						deleteReminderById={deleteReminderById}
-						fetchRemindersByDate={fetchRemindersByDate}
-						bgColor="bg-pink-400"
-						textBgColor="bg-pink-500"
-						title="Doctor Visits"
-						tasks={filterRemindersByType(reminders, ReminderType.DOCTOR_VISIT)}
-						emptyTasksMessage={"No Doctor Visits scheduled for the day!"}
-					/>
+					{[
+						{
+							bgColor: "bg-blue-400",
+							textBgColor: "bg-blue-500",
+							title: "Personal Growth",
+							reminderType: ReminderType.PERSONAL_GROWTH,
+						},
+						{
+							bgColor: "bg-orange-400",
+							textBgColor: "bg-orange-500",
+							title: "Medication",
+							reminderType: ReminderType.MEDICATION,
+						},
+						{
+							bgColor: "bg-pink-400",
+							textBgColor: "bg-pink-500",
+							title: "Doctor Visits",
+							reminderType: ReminderType.DOCTOR_VISIT,
+						},
+					].map((item) => (
+						<TasksCard
+							key={item.reminderType}
+							deleteReminderById={deleteReminderById}
+							fetchRemindersByDate={fetchRemindersByDate}
+							bgColor={item.bgColor}
+							textBgColor={item.textBgColor}
+							title={item.title}
+							tasks={filterRemindersByType(reminders, item.reminderType)}
+						/>
+					))}
 				</View>
 			</ScrollView>
 		</Layout>

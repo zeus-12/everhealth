@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Layout from "@components/common/Layout";
 import { Image } from "expo-image";
 import { blurHash } from "@/lib/constants";
 import { useAppSettings, useUserStore } from "@/hooks/useStore";
 import { Button, FormControl, Input, Modal, Switch } from "native-base";
-import { deleteDatabase } from "@/lib/db";
+import { deleteDatabase, deleteTable } from "@/lib/db";
 
 const User = ({ navigation }) => {
 	const {
@@ -30,6 +30,7 @@ const User = ({ navigation }) => {
 
 	const handleLogout = () => {
 		resetAll();
+		deleteTable("reminders");
 		deleteDatabase();
 		resetAllAppSettings();
 	};
