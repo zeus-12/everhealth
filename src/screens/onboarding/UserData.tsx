@@ -57,10 +57,17 @@ const schema = z.object({
 });
 
 const PersonalData = () => {
-	const { setHasOnBoarded, setHeight, setAge, setWeight, setName, setGender } =
-		useUserStore((s) => {
-			return s;
-		});
+	const {
+		setHasOnBoarded,
+		setHeight,
+		setAge,
+		setWeight,
+		setName,
+		setGender,
+		generateUserId,
+	} = useUserStore((s) => {
+		return s;
+	});
 
 	const {
 		control,
@@ -76,6 +83,7 @@ const PersonalData = () => {
 			setWeight(Number(data.weight));
 			setName(data.name);
 			setGender(data.gender);
+			generateUserId();
 		}
 
 		db.transaction((tx) => {

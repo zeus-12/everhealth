@@ -7,12 +7,14 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
+import { Image } from "expo-image";
 import Layout from "@components/common/Layout";
-import { Input, TextArea } from "native-base";
+import { TextArea } from "native-base";
 import { useUserStore } from "../hooks/useStore";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { chatbotId, userId } from "../../secrets";
 import { ReminderType } from "../types/storage";
+import { SCREEN_WIDTH, blurHash } from "../lib/constants";
 
 const Search = ({ navigation }) => {
 	const [query, setQuery] = useState("");
@@ -86,6 +88,7 @@ const Search = ({ navigation }) => {
 				<View className="flex-row items-center gap-4">
 					<View className="flex-1">
 						<TextArea
+							// @ts-ignore
 							className="rounded-md bg-gray-200 dark:text-slate-200 dark:bg-slate-700"
 							placeholder="Email"
 							h={"16"}
@@ -124,9 +127,19 @@ const SearchBody = ({ error, loading, results, addReminder }) => {
 		);
 	} else if (loading) {
 		return (
-			<Text className="text-lg font-medium text-gray-900 dark:text-slate-100">
-				loading
-			</Text>
+			<>
+				<Image
+					source={require(`../assets/dog.gif`)}
+					contentFit="cover"
+					transition={1000}
+					placeholder={blurHash}
+					className="mx-auto rounded-lg"
+					style={{ width: SCREEN_WIDTH - 30, height: SCREEN_WIDTH - 30 }}
+				/>
+				<Text className="text-lg font-medium text-gray-900 dark:text-slate-100">
+					Enjoy the GIF while you wait :)
+				</Text>
+			</>
 		);
 	} else if (results?.length > 0) {
 		return (
