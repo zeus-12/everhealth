@@ -116,15 +116,6 @@ export default function App() {
 				}}
 			/>
 			<Tab.Screen
-				name="Homes"
-				component={NewReminder}
-				options={{
-					tabBarIcon: ({ focused, color, size }) => (
-						<Entypo name="home" size={size} color={color} />
-					),
-				}}
-			/>
-			<Tab.Screen
 				name="Search"
 				component={SearchStack}
 				options={{
