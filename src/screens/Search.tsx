@@ -88,6 +88,7 @@ const Search = ({ navigation }) => {
 				<View className="flex-row items-center gap-4">
 					<View className="flex-1">
 						<TextArea
+							// @ts-ignore
 							className="rounded-md bg-gray-200 dark:text-slate-200 dark:bg-slate-700"
 							placeholder="Email"
 							h={"16"}

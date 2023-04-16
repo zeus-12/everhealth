@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { randomUUID } from "expo-crypto";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -27,6 +28,11 @@ export const useUserStore = create<any>(
 			age: 0,
 			setAge: (age: number) => set({ age }),
 
+			userId: 0,
+			generateUserId: () => {
+				set({ userId: randomUUID() });
+			},
+
 			resetAll: () => {
 				set({
 					hasOnboarded: false,
@@ -36,6 +42,7 @@ export const useUserStore = create<any>(
 					weight: 0,
 					age: 0,
 					gender: "",
+					userId: 0,
 				});
 			},
 		}),
