@@ -4,40 +4,30 @@ import Layout from "../components/common/Layout";
 const Leaderboard = ({ navigation }) => {
 	const SCORE_DATA = [
 		{
-			name: "John",
+			name: "Amar",
 			streak: 5,
-			total: 50,
+			total: 7,
 		},
 
 		{
-			name: "Jordan",
-			streak: 15,
-			total: 20,
+			name: "Vishnu",
+			streak: 3,
+			total: 4,
 		},
 		{
-			name: "George",
-			streak: 10,
-			total: 60,
+			name: "Nishan",
+			streak: 2,
+			total: 3,
 		},
 		{
-			name: "Jordan",
-			streak: 15,
-			total: 20,
+			name: "Abhaumika",
+			streak: 1,
+			total: 1,
 		},
 		{
-			name: "George",
-			streak: 10,
-			total: 60,
-		},
-		{
-			name: "Jordan",
-			streak: 15,
-			total: 20,
-		},
-		{
-			name: "George",
-			streak: 10,
-			total: 60,
+			name: "Test",
+			streak: 0,
+			total: 0,
 		},
 	];
 	return (
