@@ -40,8 +40,8 @@ export const useUserStore = create<any>(
 			},
 		}),
 		{
-			name: "user-storage", // unique name
-			getStorage: () => AsyncStorage, // Add this here!
+			name: "user-storage",
+			getStorage: () => AsyncStorage,
 		}
 	)
 );
@@ -66,8 +66,8 @@ export const useAppSettings = create<any>(
 			},
 		}),
 		{
-			name: "app-data", // unique name
-			getStorage: () => AsyncStorage, // Add this here!
+			name: "app-data",
+			getStorage: () => AsyncStorage,
 		}
 	)
 );
