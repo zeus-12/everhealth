@@ -16,6 +16,8 @@ import { db } from "@/lib/db";
 import { Keyboard } from "react-native";
 import { convertTimeTo12Hour } from "@/lib/utils";
 import AddTimeModal from "@/components/reminders/AddTimeModal";
+import { Platform } from "react-native";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 interface FormValues {
 	task: string;
@@ -42,7 +44,25 @@ const NewReminder = ({ navigation, route }) => {
 	};
 
 	const showAddTimeModal = () => {
-		setShowTimeModal(true);
+		if (Platform.OS === "ios") {
+			setShowTimeModal(true);
+		} else {
+			const onChange = (event, selectedDate) => {
+				const currentTime = selectedDate;
+				addTime(currentTime);
+			};
+
+			const showMode = () => {
+				DateTimePickerAndroid.open({
+					value: new Date(),
+					onChange,
+					mode: "time",
+					is24Hour: true,
+				});
+			};
+
+			showMode();
+		}
 	};
 
 	const schema = z.object({

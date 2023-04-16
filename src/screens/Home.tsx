@@ -81,9 +81,6 @@ const Home = () => {
 
 			<ScrollView className="mt-4 mb-16 dark" showsVerticalScrollIndicator={false}>
 				<View className="flex-row items-center justify-center gap-4">
-					{/* <Text className="text-center text-3xl tracking-tighter font-semibold dark:text-slate-200">
-						{dayjs(date)?.format("D MMMM")}
-					</Text> */}
 					<DatePicker date={date} setDate={setDate} isDarktheme={isDarktheme} />
 				</View>
 				<View>

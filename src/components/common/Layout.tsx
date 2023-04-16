@@ -7,7 +7,10 @@ import { Modal } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { ReminderType } from "@/types/storage";
 import { useAppSettings } from "@/hooks/useStore";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const degreeToRadian = (degree: number): number => (degree * Math.PI) / 180;
 const OFFSET_ANGLE = 10;
@@ -36,11 +39,10 @@ const Layout = ({
 		setShowStreakModal(false);
 	};
 
+	const insets = useSafeAreaInsets();
+
 	return (
-		<View
-			className="dark:bg-black"
-			style={{ minHeight: getScreenHeightWithoutTabs() }}
-		>
+		<View className="dark:bg-black flex-1">
 			<SafeAreaView className="mx-4 flex-1">
 				<View className="flex-row justify-between item-center">
 					<View className="flex-row items-center">
