@@ -1,8 +1,10 @@
-Here's a [Notion Page](https://glory-menu-212.notion.site/EverHealth-0eddd73c47c04d939d7416de819362e0) explaining all about the app
+[![PRODUCT VIDEO](./src/assets/thumbnail.png)](https://www.youtube.com/watch?v=Ujb901dZc0U)
 
-And here's [demo video](https://drive.google.com/file/d/1Q2honmCF_paeEzlAG0yfawG4wWB-KCYC/view)
 
-## Brief Summary
+## Here's a [Notion Page](https://glory-menu-212.notion.site/EverHealth-0eddd73c47c04d939d7416de819362e0) explaining all about the app
+<br />
+
+# Brief Summary
 
 - Developed a mobile app that motivates patients to adhere to treatment plans and manage chronic conditions through the use of gamification techniques. Built using Expo, React Native, firebase, GPT-4.
 
